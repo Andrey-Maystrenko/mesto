@@ -18,8 +18,8 @@
         max-width        : 282px;
         height           : 286px;
         margin           : 42px auto 0;
-        /* margin        :0; */
         /* padding       : 0 19px 0; */
+        /* margin        : 0; */
         flex-direction   : column;
         padding          : 0;
     }

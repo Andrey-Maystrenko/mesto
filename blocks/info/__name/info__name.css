@@ -10,6 +10,7 @@
     text-overflow     : ellipsis;
     white-space       : nowrap;
     overflow          : hidden;
+    /* margin         : 0; */
     margin            : -5px 0 0;
 }
 
