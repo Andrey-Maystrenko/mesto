@@ -5,11 +5,18 @@
     box-sizing         : border-box;
     border-radius      : 2px;
     margin             : 0 0 0 auto;
-    background-color   : black;
+    background         : none;
     background-image   : url(../../images/AddButtonPlus.svg);
     background-position: center;
     background-repeat  : no-repeat;
+    cursor             : pointer;
+    transition         : opacity .3s;
 }
+
+.add-button:hover {
+    opacity: .6;
+}
+
 
 @media screen and (max-width: 767px) {
     .add-button {
