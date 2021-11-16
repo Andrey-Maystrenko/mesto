@@ -1,11 +1,10 @@
-.element__like_disabled {
+.element__like {
     width           : 22px;
     height          : 19px;
-    background-image: url(../../../images/LikeDisabled.svg);
     background-color: none;
     margin          : 25px 21px 0 auto;
 }
 
-.element__like_disabled:hover {
+.element__like:hover {
     cursor: pointer;
 }
