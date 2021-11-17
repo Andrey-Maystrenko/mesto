@@ -11,7 +11,7 @@
     padding      : 10px 0 0;
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 768px) {
     .info__engagement {
         width      : 282px;
         font-size  : 14px;

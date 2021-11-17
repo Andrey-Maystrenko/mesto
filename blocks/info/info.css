@@ -6,7 +6,7 @@
     align-items: center;
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 768px) {
     .info {
         width          : 282px;
         height         : 54px;
