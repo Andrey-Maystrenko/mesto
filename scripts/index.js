@@ -8,10 +8,10 @@ const closeButton = document.querySelector('.popup__close-button');
 const editButton = document.querySelector('.info__edit-button');
 
 //помещаю код поля ввода ИМЕНИ в константу
-const inputName = document.querySelector('.popup__input-name');
+const inputName = document.querySelector('.form__input_info_name');
 
 //помещаю код поля ввода РОДА ЗАНЯТИЙ в константу
-const inputEngagement = document.querySelector('.popup__input-engagement');
+const inputEngagement = document.querySelector('.form__input_info_engagement');
 
 //помещаю код всей ФОРМЫ ввода в константу
 const formElement = document.querySelector('.form');

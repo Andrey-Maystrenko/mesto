@@ -1,7 +1,7 @@
 .element__like {
     width           : 22px;
     height          : 19px;
-    background-color: none;
+    background-color: #FFFFFF;
     background-image: url(../../../images/LikeDisabled.svg);
     margin          : 25px 21px 0 auto;
     border          : none;

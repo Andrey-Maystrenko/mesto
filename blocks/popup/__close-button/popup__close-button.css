@@ -7,36 +7,31 @@
     background: none;
     width     : 32px;
     height    : 32px;
+    transition: opacity .3s;
+}
 
+.popup__close-button:hover {
+    opacity: .6;
 }
 
 .popup__close-button::before {
-    position  : absolute;
-    content   : '';
-    border    : 2px solid white;
-    height    : 35px;
-    top       : 0;
-    transform : rotate(45deg);
-    transition: opacity .3s;
+    position        : absolute;
+    content         : '';
+    border          : 2px solid white;
+    background-color: #000000;
+    height          : 35px;
+    top             : 0;
+    transform       : rotate(45deg);
 }
-
-.popup__close-button:hover:before {
-    opacity: .6;
-}
-
 
 .popup__close-button::after {
-    position  : absolute;
-    content   : '';
-    border    : 2px solid white;
-    height    : 35px;
-    top       : 0;
-    transform : rotate(-45deg);
-    transition: opacity .3s;
-}
-
-.popup__close-button:hover:after {
-    opacity: .6;
+    position        : absolute;
+    content         : '';
+    border          : 2px solid white;
+    background-color: #000000;
+    height          : 35px;
+    top             : 0;
+    transform       : rotate(-45deg);
 }
 
 @media screen and (max-width: 768px) {
