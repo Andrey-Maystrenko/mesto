@@ -1,6 +1,6 @@
 .info {
     width      : 336px;
-    height     : 73px;
+    min-height : 73px;
     display    : flex;
     flex-wrap  : wrap;
     align-items: center;

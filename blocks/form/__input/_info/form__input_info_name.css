@@ -1,9 +1,0 @@
-.form__input_info_name {
-    margin: 42px 0 0;
-}
-
-@media screen and (max-width: 768px) {
-    .form__input_info_name {
-        margin: 66px 0 0;
-    }
-}
