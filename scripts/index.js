@@ -177,7 +177,7 @@ function formAddSubmitHandler(evt) {
         //извлекаю название КАРТИНКИ
         let elementName = event.currentTarget.parentElement.querySelector('.element__name').textContent;
         //вставляю название КАРТИНКИ в ПОПАП КАРТИНКИ
-        document.querySelector('.popup__title_mask-group').textContent = elementName;
+        document.querySelector('.popup__title-mask-group').textContent = elementName;
         //добавляю класс для открытия ПОПАПА КАРТИНКИ
         document.querySelector('.popup_mask-group').classList.add('popup_opened');
     });
@@ -264,7 +264,7 @@ maskGroup.forEach((item) =>
         //извлекаю название КАРТИНКИ
         let elementName = event.currentTarget.parentElement.querySelector('.element__name').textContent;
         //вставляю название КАРТИНКИ в ПОПАП КАРТИНКИ
-        document.querySelector('.popup__title_mask-group').textContent = elementName;
+        document.querySelector('.popup__title-mask-group').textContent = elementName;
         //добавляю класс для открытия ПОПАПА КАРТИНКИ
         document.querySelector('.popup_mask-group').classList.add('popup_opened');
     }));
