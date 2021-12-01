@@ -24,59 +24,18 @@
         <button class="profile__add-button" type="button"></button>
       </section>
       <section class="elements">
-        <div class="element">
-          <img class="element__mask-group" src="./images/anapa.jpg" alt="Анапа">
-          <div class="element__group">
-            <h2 class="element__name">Анапа</h2>
-            <button class="element__like" type="button"></button>
-          </div>
-        </div>
-        <div class="element">
-          <img class="element__mask-group" src="./images/novorossiysk.jpg" alt="Новороссийск">
-          <div class="element__group">
-            <h2 class="element__name">Новороссийск</h2>
-            <button class="element__like" type="button"></button>
-          </div>
-        </div>
-        <div class="element">
-          <img class="element__mask-group" src="./images/gelendzhik.jpg" alt="Геленджик">
-          <div class="element__group">
-            <h2 class="element__name">Геленджик</h2>
-            <button class="element__like" type="button"></button>
-          </div>
-        </div>
-        <div class="element">
-          <img class="element__mask-group" src="./images/lazarevskoe.jpg" alt="Лазаревское">
-          <div class="element__group">
-            <h2 class="element__name">Лазаревское</h2>
-            <button class="element__like" type="button"></button>
-          </div>
-        </div>
-        <div class="element">
-          <img class="element__mask-group" src="./images/sochi.jpg" alt="Сочи">
-          <div class="element__group">
-            <h2 class="element__name">Сочи</h2>
-            <button class="element__like" type="button"></button>
-          </div>
-        </div>
-        <div class="element">
-          <img class="element__mask-group" src="./images/adler.jpg" alt="Адлер">
-          <div class="element__group">
-            <h2 class="element__name">Адлер</h2>
-            <button class="element__like" type="button"></button>
-          </div>
-        </div>
+
       </section>
     </main>
     <footer class="footer">
       <p class="footer__copyright">© 2021 Mesto Russia</p>
     </footer>
-    <div class="popup">
+    <div class="popup popup_edit-info">
       <div class="popup__window">
-        <button class="popup__close-button" type="button"></button>
+        <button class="popup__close-button popup__close-button_info" type="button"></button>
         <section class="popup__content">
           <h3 class="popup__title">Редактировать профиль</h3>
-          <form class="form" name="info">
+          <form class="form form_edit-info" name="info">
             <input class="form__input form__input_info_name" type="text" name="info__name">
             <input class="form__input form__input_info_engagement" type="text" name="info__engagement">
             <button class="popup__save-button" type="submit">
@@ -86,7 +45,46 @@
         </section>
       </div>
     </div>
+    <div class="popup popup_add-element">
+      <div class="popup__window">
+        <button class="popup__close-button popup__close-button_element" type="button"></button>
+        <section class="popup__content">
+          <h3 class="popup__title">Новое место</h3>
+          <form class="form form_add-element" name="info">
+            <input class="form__input form__input_element_name" type="text" placeholder="Название" name="element__name">
+            <input class="form__input form__input_element_mask-group" type="url" placeholder="Ссылка на картинку"
+              name="element__mask-group">
+            <button class="popup__save-button" type="submit">
+              <span class="popup__save-button-text">Создать</span>
+            </button>
+          </form>
+        </section>
+      </div>
+    </div>
+    <div class="popup popup_mask-group">
+      <div class="popup__window_mask-group">
+        <button class="popup__close-button popup__close-button_mask-group" type="button"></button>
+        <section class="popup__content">
+          <img class="popup__mask-group-full-size">
+          <h3 class="popup__title_mask-group"></h3>
+        </section>
+      </div>
+    </div>
   </div>
+
+  <template class="template">
+    <div class="element">
+      <button class="element__button-mask-group" type="button">
+        <img class="element__mask-group">
+      </button>
+      <div class="element__group">
+        <h2 class="element__name"></h2>
+        <button class="element__like" type="button"></button>
+      </div>
+      <button class="element__trash" type="button"></button>
+    </div>
+  </template>
+
   <script src="./scripts/index.js"></script>
 </body>
 

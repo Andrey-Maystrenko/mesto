@@ -1,4 +1,5 @@
 .popup__content {
+    /* max-width      : 75vh; */
     display        : flex;
     flex-direction : column;
     justify-content: start;

@@ -8,6 +8,7 @@
     width     : 32px;
     height    : 32px;
     transition: opacity .3s;
+    z-index   : 2;
 }
 
 .popup__close-button:hover {

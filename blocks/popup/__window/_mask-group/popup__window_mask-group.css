@@ -1,0 +1,8 @@
+.popup__window_mask-group {
+    position        : relative;
+    background-color: none;
+    box-shadow      : none;
+    border-radius   : none;
+    margin          : 0 auto;
+    padding         : none;
+}

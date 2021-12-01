@@ -7,14 +7,6 @@
     row-gap              : 20px;
 }
 
-/* @media screen and (max-width: 1279px) {
-    .photo-grid {
-        max-width            : 928px;
-        grid-template-columns: repeat(3, 1fr);
-        gap                  : 14px;
-    }
-} */
-
 @media screen and (max-width: 1023px) {
     .elements {
         max-width            : 581px;
