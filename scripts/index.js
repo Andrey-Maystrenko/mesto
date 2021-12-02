@@ -1,5 +1,11 @@
-// помещаю в переменную ПОПАП для add button
+//помещаю в переменную ПОПАП для Edit button
+const popupEditInfo = document.querySelector('.popup_edit-info');
+
+// помещаю в переменную ПОПАП для Add button
 const popupAddElement = document.querySelector('.popup_add-element');
+
+// помещаю в переменную ПОПАП для КАРТИНКИ full size
+const popupImage = document.querySelector('.popup_mask-group');
 
 //помещаю код кнопки "Закрыть" для ПОПАПА "Edit info" в константу
 const closeEditButton = document.querySelector('.popup__close-button_info');
@@ -23,10 +29,10 @@ const formEditInfo = document.querySelector('.form_edit-info');
 const formAddElement = document.querySelector('.form_add-element');
 
 //помеащю код ИМЕНИ в блоке ИНФО в переменную
-let infoName = document.querySelector('.info__name');
+const infoName = document.querySelector('.info__name');
 
 //помещаю код РОДА ЗАНЯТИЙ в блоке ИНФО в переменную
-let infoEngagement = document.querySelector('.info__engagement');
+const infoEngagement = document.querySelector('.info__engagement');
 
 // помещаю в переменную код поля ввода ИМЕНИ автора
 const inputName = document.querySelector('.form__input_info_name');
@@ -84,11 +90,35 @@ const createCardDomNode = (item) => {
     //помещая в переменную код названия карточки и задаю ему название name из массива
     cardTemplate.querySelector('.element__name').textContent = item.name;
 
-    // помещаю в переменную код кнопки "удалить"
+    //навешиваю событие на кнопку "УДАЛИТЬ" - удалить DOM node cardTemplate
     const deleteButton = cardTemplate.querySelector('.element__trash');
-    //навешиваю событие на кнопку "удалить" - удалить DOM node cardTemplate
     deleteButton.addEventListener('click', () => {
         cardTemplate.remove();
+    });
+
+    //навешиваю слушатель события на новую кнопку ЛАЙКА
+    const likeButton = cardTemplate.querySelector('.element__like');
+    likeButton.addEventListener('click', () => {
+        likeButton.classList.toggle('element__like_active')
+    });
+
+    //навешиваю событие при клике на КАРТИНКУ
+    const maskGroup = cardTemplate.querySelector('.element__button-mask-group');
+    maskGroup.addEventListener('click', function (event) {
+        //определяю на какой элемент кликнули
+        const maskGroupTarget = event.target;
+        //извелкаю из кода кликнутого элемента путь к КАРТИНКЕ (src)
+        const maskGroupTargetImage = maskGroupTarget.getAttribute('src');
+        //вставляю путь КАРТИНКИ  в ПОПАП КАРТИНКИ
+        document.querySelector('.popup__mask-group-full-size').setAttribute("src", maskGroupTargetImage)
+        //извлекаю название КАРТИНКИ
+        const elementName = event.currentTarget.parentElement.querySelector('.element__name').textContent;
+        //вставляю название КАРТИНКИ в ПОПАП КАРТИНКИ
+        document.querySelector('.popup__title-mask-group').textContent = elementName;
+        //вставляю атрибут alt в тэг КАРТИНКИ
+        document.querySelector('.popup__mask-group-full-size').setAttribute("alt", elementName)
+        //открываю ПОПАП КАРТИНКИ
+        openPopup(popupImage);
     });
     return cardTemplate;
 };
@@ -106,31 +136,23 @@ function openPopup(popupElement) {
     //добавяю в код ПОПАПА класс, отвечающий за отображение ПОПАПА
     popupElement.classList.add('popup_opened');
 }
-
 //задаю функцию закрытия ПОПАПА - удаляю из кода ПОПАПА класс, отвечающий за отображение ПОПАПА
 function closePopup(popupElement) {
     popupElement.classList.remove('popup_opened');
 };
-
 // Обработчик «отправки» формы Edit info
 // задаю функцию сохранения значний полей ИМЯ и РОД ЗАНЯТИЙ
 function formEditSubmitHandler(evt) {
-
     // Эта строчка отменяет стандартную отправку формы.
     evt.preventDefault();
-
-    let popupElement = document.querySelector('.popup_edit-info');
-
+    // const popupElement = document.querySelector('.popup_edit-info');
     //вставляю в код ИМЕНИ в блоке ИНФО значение поля ввода ИМЕНИ
     infoName.textContent = inputName.value;
-
     //вставляю в код РОДА ЗАНЯТИЙ в блоке ИНФО значение поля ввода РОДА ЗАНЯТИЙ
     infoEngagement.textContent = inputEngagement.value;
-
     //закрываю ПОПАП функцией
-    closePopup(popupElement);
+    closePopup(popupEditInfo);
 }
-
 // Прикрепляем обработчик к форме:
 //во всем коде, вложенном в тэг с классом .form_edit-info ищем тэг с типом 'submit'
 // и в случае submit=true запускаем функцию "отправки" формы
@@ -139,57 +161,22 @@ formEditInfo.addEventListener('submit', formEditSubmitHandler);
 // Обработчик «отправки» формы Add element
 // задаю функцию клонирования element из полей ввода name и link
 function formAddSubmitHandler(evt) {
-
     // Эта строчка отменяет стандартную отправку формы.
     evt.preventDefault();
-
-    // помещаю в переменную весь код ПОПАПА Add element
-    let popupElement = document.querySelector('.popup_add-element');
-
     // соpдаю новую карточку функцией создания Дом Нода карточкии 
     // в качестве параметров функции использую значения, полученные в input
-    let newCard = createCardDomNode({
+    const newCard = createCardDomNode({
         name: inputElementName.value,
         link: inputElementMaskGroup.value
     });
     //вставляю разметку с добавленной карточкой в elements
     elements.prepend(newCard);
-
-    //помещаю в переменную код новой кнопки лайка
-    let newLikeButton = newCard.querySelector('.element__like');
-
-    //навешиваю слушатель события на новую кнопку лайка
-    newLikeButton.addEventListener('click', () => {
-        newLikeButton.classList.toggle('element__like_active')
-    });
-
-    //помещаю в переменную код кнопки-картинки для новой карточки 
-    let newMaskGroup = newCard.querySelector('.element__button-mask-group');
-
-    //навешиваю слушатель события на новую кнопку-картинку
-    newMaskGroup.addEventListener('click', function (event) {
-        //определяю на какой элемент кликнули
-        let maskGroupTarget = event.target
-        //извелкаю из кода кликнутого элемента путь к КАРТИНКЕ (src)
-        let maskGroupTargetImage = maskGroupTarget.getAttribute('src');
-        //вставляю путь КАРТИНКИ  в ПОПАП КАРТИНКИ
-        document.querySelector('.popup__mask-group-full-size').setAttribute("src", maskGroupTargetImage)
-        //извлекаю название КАРТИНКИ
-        let elementName = event.currentTarget.parentElement.querySelector('.element__name').textContent;
-        //вставляю название КАРТИНКИ в ПОПАП КАРТИНКИ
-        document.querySelector('.popup__title-mask-group').textContent = elementName;
-        //добавляю класс для открытия ПОПАПА КАРТИНКИ
-        document.querySelector('.popup_mask-group').classList.add('popup_opened');
-    });
-
     //обнуляю поля формы для следующего ввода
     inputElementName.value = '';
     inputElementMaskGroup.value = '';
-
     //закрываю ПОПАП функцией
-    closePopup(popupElement);
+    closePopup(popupAddElement);
 }
-
 // Прикрепляем обработчик к форме:
 //во всем коде, вложенном в тэг с классом .form_add-element ищем тэг с типом 'submit'
 // и в случае submit=true запускаем функцию "отправки" формы
@@ -197,81 +184,34 @@ formAddElement.addEventListener('submit', formAddSubmitHandler);
 
 //программирую нажатие кнопки "Редактировать" (editButton)
 editButton.addEventListener('click', () => {
-
-    let popupElement = document.querySelector('.popup_edit-info');
-
-
-    //помещаю код поля ввода ИМЕНИ в константу
-    const inputName = document.querySelector('.form__input_info_name');
-
-    //помещаю код поля ввода РОДА ЗАНЯТИЙ в константу
-    const inputEngagement = document.querySelector('.form__input_info_engagement');
-
     //задаю значение поля ввода ИМЕНИ - извлекаю текст из кода ИМЕНИ в блоке ИНФО
     inputName.value = infoName.textContent;
     //задаю значение поля ввода РОДА ЗАНЯТИЙ - извлекаю текст из кода РОДА ЗАНЯТИЙ в блоке ИНФО
     inputEngagement.value = infoEngagement.textContent;
-
-    openPopup(popupElement);
+    //открываю попап для кнопки "Редактировать"
+    openPopup(popupEditInfo);
 });
 
 //программирую нажатие кнопки "Закрыть" ПОПАП Edit info, 
 closeEditButton.addEventListener('click', () => {
-    let popupElement = document.querySelector('.popup_edit-info');
-
-    closePopup(popupElement);
+    closePopup(popupEditInfo);
 });
 
 //программирую нажатие кнопки "Закрыть" ПОПАП Add element, 
 closeAddButton.addEventListener('click', () => {
-    let popupElement = document.querySelector('.popup_add-element');
+    //обнуляю содержание полей ввода для последующих вводов
     inputElementName.value = '';
     inputElementMaskGroup.value = '';
-
-    closePopup(popupElement);
+    //закрываю попап
+    closePopup(popupAddElement);
 });
 
 // программирую нажатие кнопки "Добавить" (+) (addButton)
 addButton.addEventListener('click', () => {
-    let popupElement = document.querySelector('.popup_add-element');
-
-    openPopup(popupElement);
+    openPopup(popupAddElement);
 });
-
-//помещаю в переменную массив с кодом(разметкой) всех элементами ЛАЙК
-let like = document.querySelectorAll('.element__like');
-
-
-//для каждого элемента массива задаю слушатель события, который переключает класс 
-like.forEach((item) =>
-    item.addEventListener('click', () => {
-        item.classList.toggle('element__like_active')
-    })
-);
-
-//помещаю в переменную массив с разметкой каждой КАРТИНКИ
-let maskGroup = document.querySelectorAll('.element__button-mask-group');
-
-//навешиваю событие по клику на каждую КАРТИНКУ
-maskGroup.forEach((item) =>
-    item.addEventListener('click', function (event) {
-        //определяю на какой элемент кликнули
-        let maskGroupTarget = event.target
-        //извелкаю из кода кликнутого элемента путь к КАРТИНКЕ (src)
-        let maskGroupTargetImage = maskGroupTarget.getAttribute('src');
-        //вставляю путь КАРТИНКИ  в ПОПАП КАРТИНКИ
-        document.querySelector('.popup__mask-group-full-size').setAttribute("src", maskGroupTargetImage)
-        //извлекаю название КАРТИНКИ
-        let elementName = event.currentTarget.parentElement.querySelector('.element__name').textContent;
-        //вставляю название КАРТИНКИ в ПОПАП КАРТИНКИ
-        document.querySelector('.popup__title-mask-group').textContent = elementName;
-        //добавляю класс для открытия ПОПАПА КАРТИНКИ
-        document.querySelector('.popup_mask-group').classList.add('popup_opened');
-    }));
 
 //программирую нажатие кнопки "Закрыть" ПОПАП открытия full size КАРТИНКИ, 
 closeMaskGroupPopup.addEventListener('click', () => {
-    let popupElement = document.querySelector('.popup_mask-group');
-
-    closePopup(popupElement)
+    closePopup(popupImage);
 });
