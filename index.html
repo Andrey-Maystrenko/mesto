@@ -35,9 +35,13 @@
         <button class="popup__close-button popup__close-button_info" type="button"></button>
         <section class="popup__content">
           <h3 class="popup__title">Редактировать профиль</h3>
-          <form class="form form_edit-info" name="info">
-            <input class="form__input form__input_info_name" type="text" name="info__name">
-            <input class="form__input form__input_info_engagement" type="text" name="info__engagement">
+          <form class="form form_edit-info" name="info" novalidate>
+            <input class="form__input form__input_info_name" type="text" name="info__name" required minlength="2"
+              maxlength="40" id="form__input_info_name">
+            <span class="popup__error" id="form__input_info_name-error"></span>
+            <input class="form__input form__input_info_engagement" type="text" name="info__engagement" required
+              minlength="2" maxlength="200" id="form__input_info_engagement">
+            <span class="popup__error" id="form__input_info_engagement-error"></span>
             <button class="popup__save-button" type="submit">
               <span class="popup__save-button-text">Сохранить</span>
             </button>
@@ -50,10 +54,13 @@
         <button class="popup__close-button popup__close-button_element" type="button"></button>
         <section class="popup__content">
           <h3 class="popup__title">Новое место</h3>
-          <form class="form form_add-element" name="info">
-            <input class="form__input form__input_element_name" type="text" placeholder="Название" name="element__name">
+          <form class="form form_add-element" name="element" novalidate>
+            <input class="form__input form__input_element_name" type="text" placeholder="Название" name="element__name"
+              required minlength="2" maxlength="30" id="form__input_element_name">
+            <span class="popup__error" id="form__input_element_name-error"></span>
             <input class="form__input form__input_element_mask-group" type="url" placeholder="Ссылка на картинку"
-              name="element__mask-group">
+              name="element__mask-group" required id="form__input_element_mask-group">
+            <span class="popup__error" id="form__input_element_mask-group-error"></span>
             <button class="popup__save-button" type="submit">
               <span class="popup__save-button-text">Создать</span>
             </button>
@@ -86,6 +93,7 @@
   </template>
 
   <script src="./scripts/index.js"></script>
+  <script src="./scripts/validate.js"></script>
 </body>
 
 </html>

@@ -119,6 +119,12 @@ const createCardDomNode = (item) => {
         document.querySelector('.popup__mask-group-full-size').setAttribute("alt", elementName)
         //открываю ПОПАП КАРТИНКИ
         openPopup(popupImage);
+        //навешиваю событие закрытия КАРТИНКИ по нажатию esc
+        document.addEventListener('keydown', (evt) => {
+            if (evt.key === 'Escape') {
+                closePopup(popupImage);
+            }
+        });
     });
     return cardTemplate;
 };
@@ -138,6 +144,20 @@ function openPopup(popupElement) {
 }
 //задаю функцию закрытия ПОПАПА - удаляю из кода ПОПАПА класс, отвечающий за отображение ПОПАПА
 function closePopup(popupElement) {
+    //удаляю форматирование всех полей ввода ПОПАПА при ошибке
+    const errorField = popupElement.querySelectorAll('.form__input');
+    errorField.forEach(item => {
+        item.classList.remove('form__input_error');
+    });
+    //удаляю текст сообщения об ошибке для всех полей ПОПАПА
+    const errorText = popupElement.querySelectorAll('.popup__error');
+    errorText.forEach(item => {
+        item.textContent = '';
+    });
+    //обнуляю поля формы Add button (+) для следующего ввода
+    inputElementName.value = '';
+    inputElementMaskGroup.value = '';
+    //удаляю клас, отвечающий за отображение ПОПАПА
     popupElement.classList.remove('popup_opened');
 };
 // Обработчик «отправки» формы Edit info
@@ -215,3 +235,20 @@ addButton.addEventListener('click', () => {
 closeMaskGroupPopup.addEventListener('click', () => {
     closePopup(popupImage);
 });
+//программирую закрытиые ПОПАПОВ по нажатию esc
+document.addEventListener('keydown', (evt) => {
+    if (evt.key === 'Escape') {
+        closePopup(popupEditInfo);
+        closePopup(popupAddElement);
+    }
+});
+//навешиваю на оверлей закрытие ПОПАПА по клику
+const overlay = document.querySelectorAll('.popup');
+overlay.forEach((item) => {
+    item.addEventListener('click', (evt) => {
+        if (evt.target === evt.currentTarget) {
+            closePopup(item);
+        }
+    })
+});
+
