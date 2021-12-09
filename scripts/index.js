@@ -46,6 +46,18 @@ const inputElementName = document.querySelector('.form__input_element_name');
 //помещаю код поля ввода ССЫЛКИ НА КАРТИНКИ в константу
 const inputElementMaskGroup = document.querySelector('.form__input_element_mask-group');
 
+//помещаю в переменную массив со всеми кнопками сохранения/отправки формы ПОПАПОВ
+const saveButton = document.querySelectorAll('.popup__save-button');
+
+//помещаю в переменную массив со всеми элементами полей ввода
+const inputField = document.querySelectorAll('.form__input');
+
+//помещаю в переменную массив со всеми span'ами с текстом ошибки
+const errorText = document.querySelectorAll('.popup__error');
+
+//помещаю в переменную массив со всеми ПОПАПАМИ
+const popups = document.querySelectorAll('.popup');
+
 //помещаю в переменную код элемента с классом .elements
 const elements = document.querySelector('.elements');
 //помещаю в переменнную код разметки карточки template
@@ -78,7 +90,6 @@ const initialCards = [
         link: './images/adler.jpg'
     }
 ];
-
 //помещаю в переменную функцию клонирования разметки карточки и вставки ее НАЗВАНИЯ и РИСУНКА   
 const createCardDomNode = (item) => {
     // помещаю в переменную содержимое тега template (разметка карточки)
@@ -95,13 +106,11 @@ const createCardDomNode = (item) => {
     deleteButton.addEventListener('click', () => {
         cardTemplate.remove();
     });
-
     //навешиваю слушатель события на новую кнопку ЛАЙКА
     const likeButton = cardTemplate.querySelector('.element__like');
     likeButton.addEventListener('click', () => {
         likeButton.classList.toggle('element__like_active')
     });
-
     //навешиваю событие при клике на КАРТИНКУ
     const maskGroup = cardTemplate.querySelector('.element__button-mask-group');
     maskGroup.addEventListener('click', function (event) {
@@ -128,12 +137,10 @@ const createCardDomNode = (item) => {
     });
     return cardTemplate;
 };
-
 // создаю массив с начальными карточками, помещая его в переменную
 const renderedCards = initialCards.map((item) => {
     return createCardDomNode(item)
 });
-
 // вставляю массив с начальными карточками в elements
 elements.append(...renderedCards);
 
@@ -141,28 +148,60 @@ elements.append(...renderedCards);
 function openPopup(popupElement) {
     //добавяю в код ПОПАПА класс, отвечающий за отображение ПОПАПА
     popupElement.classList.add('popup_opened');
+    //навешиваю событие закрытия ПОПАПА по нажатию esc
+    document.addEventListener('keydown', closeByEsc);
 }
 //задаю функцию закрытия ПОПАПА - удаляю из кода ПОПАПА класс, отвечающий за отображение ПОПАПА
 function closePopup(popupElement) {
-    //удаляю форматирование всех полей ввода ПОПАПА при ошибке
-    const errorField = popupElement.querySelectorAll('.form__input');
-    errorField.forEach(item => {
-        item.classList.remove('form__input_error');
-    });
+    //удаляю индикацию поля при ошибке
+    removeErrorIndication()
     //удаляю текст сообщения об ошибке для всех полей ПОПАПА
-    const errorText = popupElement.querySelectorAll('.popup__error');
-    errorText.forEach(item => {
-        item.textContent = '';
-    });
+    deleteErrorMessage()
     //обнуляю поля формы Add button (+) для следующего ввода
-    inputElementName.value = '';
-    inputElementMaskGroup.value = '';
+    eraseInputText()
+    //деактивирую кнопку сохранения ПОПАПА
+    deactivateSaveButton();
+    //удаляяю событие закрытия ПОПАПА по нажатию esc
+    document.removeEventListener('keydown', closeByEsc);
     //удаляю клас, отвечающий за отображение ПОПАПА
     popupElement.classList.remove('popup_opened');
 };
+//задаю функцию удаления индикации поля при ошибке
+function removeErrorIndication() {
+    inputField.forEach(item => {
+        item.classList.remove('form__input_error');
+    });
+}
+//задаю функцию удаления текста ошибки
+function deleteErrorMessage() {
+    errorText.forEach(item => {
+        item.textContent = '';
+    });
+}
+//задаю функции очистки полей по закрытии ПОПАПА
+function eraseInputText() {
+    inputField.forEach((item) => {
+        item.value = '';
+    })
+}
+//задаю функцию деактивации кнопки сохранения данных ПОПАПА
+function deactivateSaveButton() {
+    saveButton.forEach((item) => {
+        item.disabled = true;
+        item.classList.add('popup__save-button_disabled');
+    });
+}
+//задаю функцию закрытия ПОПАПА по нажатию esc
+function closeByEsc(evt) {
+    //помещаю в переменную элемент открытого в настоящий момент ПОПАПА
+    const openedPopup = document.querySelector('.popup_opened');
+    if (evt.key === 'Escape') {
+        closePopup(openedPopup);
+    }
+}
 // Обработчик «отправки» формы Edit info
 // задаю функцию сохранения значний полей ИМЯ и РОД ЗАНЯТИЙ
-function formEditSubmitHandler(evt) {
+function toFormEditSubmitHandler(evt) {
     // Эта строчка отменяет стандартную отправку формы.
     evt.preventDefault();
     // const popupElement = document.querySelector('.popup_edit-info');
@@ -176,11 +215,11 @@ function formEditSubmitHandler(evt) {
 // Прикрепляем обработчик к форме:
 //во всем коде, вложенном в тэг с классом .form_edit-info ищем тэг с типом 'submit'
 // и в случае submit=true запускаем функцию "отправки" формы
-formEditInfo.addEventListener('submit', formEditSubmitHandler);
+formEditInfo.addEventListener('submit', toFormEditSubmitHandler);
 
 // Обработчик «отправки» формы Add element
 // задаю функцию клонирования element из полей ввода name и link
-function formAddSubmitHandler(evt) {
+function toFormAddSubmitHandler(evt) {
     // Эта строчка отменяет стандартную отправку формы.
     evt.preventDefault();
     // соpдаю новую карточку функцией создания Дом Нода карточкии 
@@ -200,8 +239,7 @@ function formAddSubmitHandler(evt) {
 // Прикрепляем обработчик к форме:
 //во всем коде, вложенном в тэг с классом .form_add-element ищем тэг с типом 'submit'
 // и в случае submit=true запускаем функцию "отправки" формы
-formAddElement.addEventListener('submit', formAddSubmitHandler);
-
+formAddElement.addEventListener('submit', toFormAddSubmitHandler);
 //программирую нажатие кнопки "Редактировать" (editButton)
 editButton.addEventListener('click', () => {
     //задаю значение поля ввода ИМЕНИ - извлекаю текст из кода ИМЕНИ в блоке ИНФО
@@ -211,12 +249,10 @@ editButton.addEventListener('click', () => {
     //открываю попап для кнопки "Редактировать"
     openPopup(popupEditInfo);
 });
-
 //программирую нажатие кнопки "Закрыть" ПОПАП Edit info, 
 closeEditButton.addEventListener('click', () => {
     closePopup(popupEditInfo);
 });
-
 //программирую нажатие кнопки "Закрыть" ПОПАП Add element, 
 closeAddButton.addEventListener('click', () => {
     //обнуляю содержание полей ввода для последующих вводов
@@ -225,30 +261,21 @@ closeAddButton.addEventListener('click', () => {
     //закрываю попап
     closePopup(popupAddElement);
 });
-
 // программирую нажатие кнопки "Добавить" (+) (addButton)
 addButton.addEventListener('click', () => {
+    // //деактивирую кнопку save-button ПОПАПА
+    // saveButton.disabled = true;
     openPopup(popupAddElement);
 });
-
 //программирую нажатие кнопки "Закрыть" ПОПАП открытия full size КАРТИНКИ, 
 closeMaskGroupPopup.addEventListener('click', () => {
     closePopup(popupImage);
 });
-//программирую закрытиые ПОПАПОВ по нажатию esc
-document.addEventListener('keydown', (evt) => {
-    if (evt.key === 'Escape') {
-        closePopup(popupEditInfo);
-        closePopup(popupAddElement);
-    }
-});
 //навешиваю на оверлей закрытие ПОПАПА по клику
-const overlay = document.querySelectorAll('.popup');
-overlay.forEach((item) => {
+popups.forEach((item) => {
     item.addEventListener('click', (evt) => {
         if (evt.target === evt.currentTarget) {
             closePopup(item);
         }
     })
 });
-

@@ -1,3 +1,5 @@
+
+
 const hideInputError = (formElement, inputElement, config) => {
     const { inputErrorClass, errorClass, } = config;
     // Находим блок, в котором отображается ошибка.
@@ -57,12 +59,15 @@ const setEventListeners = (formElement, config) => {
         Иначе кнопка будет активной до первого ввода в поля формы.
     */
     toggleButtonState(formElement, buttonElement, inactiveButtonClass);
+
+
     // Навешиваем слушатель на ввод в поля формы попапа.
     inputList.forEach((inputElement) => {
         inputElement.addEventListener('input', () => {
             checkInputValidity(formElement, inputElement, { errorClass, inputErrorClass });
             toggleButtonState(formElement, buttonElement, inactiveButtonClass);
         });
+
     });
 };
 
