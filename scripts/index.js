@@ -240,6 +240,7 @@ function toFormAddSubmitHandler(evt) {
 //во всем коде, вложенном в тэг с классом .form_add-element ищем тэг с типом 'submit'
 // и в случае submit=true запускаем функцию "отправки" формы
 formAddElement.addEventListener('submit', toFormAddSubmitHandler);
+
 //программирую нажатие кнопки "Редактировать" (editButton)
 editButton.addEventListener('click', () => {
     //задаю значение поля ввода ИМЕНИ - извлекаю текст из кода ИМЕНИ в блоке ИНФО
@@ -249,33 +250,18 @@ editButton.addEventListener('click', () => {
     //открываю попап для кнопки "Редактировать"
     openPopup(popupEditInfo);
 });
-//программирую нажатие кнопки "Закрыть" ПОПАП Edit info, 
-closeEditButton.addEventListener('click', () => {
-    closePopup(popupEditInfo);
-});
-//программирую нажатие кнопки "Закрыть" ПОПАП Add element, 
-closeAddButton.addEventListener('click', () => {
-    //обнуляю содержание полей ввода для последующих вводов
-    inputElementName.value = '';
-    inputElementMaskGroup.value = '';
-    //закрываю попап
-    closePopup(popupAddElement);
-});
 // программирую нажатие кнопки "Добавить" (+) (addButton)
 addButton.addEventListener('click', () => {
-    // //деактивирую кнопку save-button ПОПАПА
-    // saveButton.disabled = true;
     openPopup(popupAddElement);
 });
-//программирую нажатие кнопки "Закрыть" ПОПАП открытия full size КАРТИНКИ, 
-closeMaskGroupPopup.addEventListener('click', () => {
-    closePopup(popupImage);
-});
-//навешиваю на оверлей закрытие ПОПАПА по клику
-popups.forEach((item) => {
-    item.addEventListener('click', (evt) => {
-        if (evt.target === evt.currentTarget) {
-            closePopup(item);
+//программирую закрытие ПОПАПА по клику (на крестик или на оверлей)
+popups.forEach((popup) => {
+    popup.addEventListener('click', (evt) => {
+        if (evt.target.classList.contains('popup_opened')) {
+            closePopup(popup)
+        }
+        if (evt.target.classList.contains('popup__close-button')) {
+            closePopup(popup)
         }
     })
-});
+})
