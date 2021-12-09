@@ -47,13 +47,13 @@ const inputElementName = document.querySelector('.form__input_element_name');
 const inputElementMaskGroup = document.querySelector('.form__input_element_mask-group');
 
 //помещаю в переменную массив со всеми кнопками сохранения/отправки формы ПОПАПОВ
-const saveButton = document.querySelectorAll('.popup__save-button');
+const saveButtons = document.querySelectorAll('.popup__save-button');
 
 //помещаю в переменную массив со всеми элементами полей ввода
-const inputField = document.querySelectorAll('.form__input');
+const inputFields = document.querySelectorAll('.form__input');
 
 //помещаю в переменную массив со всеми span'ами с текстом ошибки
-const errorText = document.querySelectorAll('.popup__error');
+const errorTexts = document.querySelectorAll('.popup__error');
 
 //помещаю в переменную массив со всеми ПОПАПАМИ
 const popups = document.querySelectorAll('.popup');
@@ -128,12 +128,6 @@ const createCardDomNode = (item) => {
         document.querySelector('.popup__mask-group-full-size').setAttribute("alt", elementName)
         //открываю ПОПАП КАРТИНКИ
         openPopup(popupImage);
-        //навешиваю событие закрытия КАРТИНКИ по нажатию esc
-        document.addEventListener('keydown', (evt) => {
-            if (evt.key === 'Escape') {
-                closePopup(popupImage);
-            }
-        });
     });
     return cardTemplate;
 };
@@ -153,14 +147,6 @@ function openPopup(popupElement) {
 }
 //задаю функцию закрытия ПОПАПА - удаляю из кода ПОПАПА класс, отвечающий за отображение ПОПАПА
 function closePopup(popupElement) {
-    //удаляю индикацию поля при ошибке
-    removeErrorIndication()
-    //удаляю текст сообщения об ошибке для всех полей ПОПАПА
-    deleteErrorMessage()
-    //обнуляю поля формы Add button (+) для следующего ввода
-    eraseInputText()
-    //деактивирую кнопку сохранения ПОПАПА
-    deactivateSaveButton();
     //удаляяю событие закрытия ПОПАПА по нажатию esc
     document.removeEventListener('keydown', closeByEsc);
     //удаляю клас, отвечающий за отображение ПОПАПА
@@ -168,25 +154,25 @@ function closePopup(popupElement) {
 };
 //задаю функцию удаления индикации поля при ошибке
 function removeErrorIndication() {
-    inputField.forEach(item => {
+    inputFields.forEach(item => {
         item.classList.remove('form__input_error');
     });
 }
 //задаю функцию удаления текста ошибки
 function deleteErrorMessage() {
-    errorText.forEach(item => {
+    errorTexts.forEach(item => {
         item.textContent = '';
     });
 }
 //задаю функции очистки полей по закрытии ПОПАПА
 function eraseInputText() {
-    inputField.forEach((item) => {
+    inputFields.forEach((item) => {
         item.value = '';
     })
 }
 //задаю функцию деактивации кнопки сохранения данных ПОПАПА
 function deactivateSaveButton() {
-    saveButton.forEach((item) => {
+    saveButtons.forEach((item) => {
         item.disabled = true;
         item.classList.add('popup__save-button_disabled');
     });
@@ -194,14 +180,14 @@ function deactivateSaveButton() {
 //задаю функцию закрытия ПОПАПА по нажатию esc
 function closeByEsc(evt) {
     //помещаю в переменную элемент открытого в настоящий момент ПОПАПА
-    const openedPopup = document.querySelector('.popup_opened');
     if (evt.key === 'Escape') {
+        const openedPopup = document.querySelector('.popup_opened');
         closePopup(openedPopup);
     }
 }
 // Обработчик «отправки» формы Edit info
 // задаю функцию сохранения значний полей ИМЯ и РОД ЗАНЯТИЙ
-function toFormEditSubmitHandler(evt) {
+function handleEditSubmitForm(evt) {
     // Эта строчка отменяет стандартную отправку формы.
     evt.preventDefault();
     // const popupElement = document.querySelector('.popup_edit-info');
@@ -215,11 +201,11 @@ function toFormEditSubmitHandler(evt) {
 // Прикрепляем обработчик к форме:
 //во всем коде, вложенном в тэг с классом .form_edit-info ищем тэг с типом 'submit'
 // и в случае submit=true запускаем функцию "отправки" формы
-formEditInfo.addEventListener('submit', toFormEditSubmitHandler);
+formEditInfo.addEventListener('submit', handleEditSubmitForm);
 
 // Обработчик «отправки» формы Add element
 // задаю функцию клонирования element из полей ввода name и link
-function toFormAddSubmitHandler(evt) {
+function handleAddSubmitForm(evt) {
     // Эта строчка отменяет стандартную отправку формы.
     evt.preventDefault();
     // соpдаю новую карточку функцией создания Дом Нода карточкии 
@@ -231,15 +217,14 @@ function toFormAddSubmitHandler(evt) {
     //вставляю разметку с добавленной карточкой в elements
     elements.prepend(newCard);
     //обнуляю поля формы для следующего ввода
-    inputElementName.value = '';
-    inputElementMaskGroup.value = '';
+    eraseInputText()
     //закрываю ПОПАП функцией
     closePopup(popupAddElement);
 }
 // Прикрепляем обработчик к форме:
 //во всем коде, вложенном в тэг с классом .form_add-element ищем тэг с типом 'submit'
 // и в случае submit=true запускаем функцию "отправки" формы
-formAddElement.addEventListener('submit', toFormAddSubmitHandler);
+formAddElement.addEventListener('submit', handleAddSubmitForm);
 
 //программирую нажатие кнопки "Редактировать" (editButton)
 editButton.addEventListener('click', () => {
@@ -247,11 +232,25 @@ editButton.addEventListener('click', () => {
     inputName.value = infoName.textContent;
     //задаю значение поля ввода РОДА ЗАНЯТИЙ - извлекаю текст из кода РОДА ЗАНЯТИЙ в блоке ИНФО
     inputEngagement.value = infoEngagement.textContent;
+    //удаляю индикацию поля при ошибке
+    removeErrorIndication()
+    //удаляю текст сообщения об ошибке для всех полей ПОПАПА
+    deleteErrorMessage()
+    //деактивирую кнопку сохранения ПОПАПА
+    deactivateSaveButton();
     //открываю попап для кнопки "Редактировать"
     openPopup(popupEditInfo);
 });
 // программирую нажатие кнопки "Добавить" (+) (addButton)
 addButton.addEventListener('click', () => {
+    //удаляю индикацию поля при ошибке
+    removeErrorIndication()
+    //удаляю текст сообщения об ошибке для всех полей ПОПАПА
+    deleteErrorMessage()
+    //обнуляю поля формы Add button (+) для следующего ввода
+    eraseInputText()
+    //деактивирую кнопку сохранения ПОПАПА
+    deactivateSaveButton();
     openPopup(popupAddElement);
 });
 //программирую закрытие ПОПАПА по клику (на крестик или на оверлей)
