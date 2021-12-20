@@ -38,10 +38,10 @@
           <form class="form form_edit-info" name="info" novalidate>
             <input class="form__input form__input_info_name" type="text" name="info__name" required minlength="2"
               maxlength="40" id="form__input_info_name">
-            <span class="popup__error" id="form__input_info_name-error"></span>
+            <span class="popup__error" id="info__name"></span>
             <input class="form__input form__input_info_engagement" type="text" name="info__engagement" required
               minlength="2" maxlength="200" id="form__input_info_engagement">
-            <span class="popup__error" id="form__input_info_engagement-error"></span>
+            <span class="popup__error" id="info__engagement"></span>
             <button class="popup__save-button" type="submit">
               <span class="popup__save-button-text">Сохранить</span>
             </button>
@@ -57,10 +57,10 @@
           <form class="form form_add-element" name="element" novalidate>
             <input class="form__input form__input_element_name" type="text" placeholder="Название" name="element__name"
               required minlength="2" maxlength="30" id="form__input_element_name">
-            <span class="popup__error" id="form__input_element_name-error"></span>
+            <span class="popup__error" id="element__name"></span>
             <input class="form__input form__input_element_mask-group" type="url" placeholder="Ссылка на картинку"
               name="element__mask-group" required id="form__input_element_mask-group">
-            <span class="popup__error" id="form__input_element_mask-group-error"></span>
+            <span class="popup__error" id="element__mask-group"></span>
             <button class="popup__save-button" type="submit">
               <span class="popup__save-button-text">Создать</span>
             </button>
@@ -92,8 +92,11 @@
     </div>
   </template>
 
-  <script src="./scripts/index.js"></script>
-  <script src="./scripts/validate.js"></script>
+  <script type="module" src="./scripts/index.js"></script>
+  <script type="module" src="./scripts/Card.js"></script>
+  <script type="module" src="./scripts/FormValidator.js"></script>
+  <script type="module" src="./scripts/utils.js"></script>
+
 </body>
 
 </html>

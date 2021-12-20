@@ -1,20 +1,11 @@
+import { Card } from './Card.js';
+import { FormValidator } from './FormValidator.js';
+
 //помещаю в переменную ПОПАП для Edit button
 const popupEditInfo = document.querySelector('.popup_edit-info');
 
 // помещаю в переменную ПОПАП для Add button
 const popupAddElement = document.querySelector('.popup_add-element');
-
-// помещаю в переменную ПОПАП для КАРТИНКИ full size
-const popupImage = document.querySelector('.popup_mask-group');
-
-//помещаю код кнопки "Закрыть" для ПОПАПА "Edit info" в константу
-const closeEditButton = document.querySelector('.popup__close-button_info');
-
-//помещаю код кнопки "Закрыть" для ПОПАПА "Add element"в константу
-const closeAddButton = document.querySelector('.popup__close-button_element');
-
-// помещаю код кнопки "Закрыть" для ПОПАПА  Mask group в константу
-const closeMaskGroupPopup = document.querySelector('.popup__close-button_mask-group');
 
 //помещаю код кнопки "Редактировать" инфо в константу
 const editButton = document.querySelector('.info__edit-button');
@@ -58,6 +49,14 @@ const errorTexts = document.querySelectorAll('.popup__error');
 //помещаю в переменную массив со всеми ПОПАПАМИ
 const popups = document.querySelectorAll('.popup');
 
+//помещаю в переменную html код КАРТИНКИ ПОПАПА КАРИНКИ
+const imagePopup = document.querySelector('.popup__mask-group-full-size');
+
+//помещаю в переменную html код НАЗВАНИЯ КАРТИНКИ ПОПАПА КАРИНКИ
+const imagePopupTitle = document.querySelector('.popup__title-mask-group');
+
+const openedPopup = `'.popup_opened'`;
+
 //помещаю в переменную код элемента с классом .elements
 const elements = document.querySelector('.elements');
 //помещаю в переменнную код разметки карточки template
@@ -90,51 +89,13 @@ const initialCards = [
         link: './images/adler.jpg'
     }
 ];
-//помещаю в переменную функцию клонирования разметки карточки и вставки ее НАЗВАНИЯ и РИСУНКА   
-const createCardDomNode = (item) => {
-    // помещаю в переменную содержимое тега template (разметка карточки)
-    const cardTemplate = template.content.querySelector('.element').cloneNode(true);
-    //помещаю в переменную код рисунка карточки и задаю ему 
-    //атрибут scr со значением link из массива
-    cardTemplate.querySelector('.element__mask-group').setAttribute("src", item.link);
-    cardTemplate.querySelector('.element__mask-group').setAttribute("alt", item.name);
-    //помещая в переменную код названия карточки и задаю ему название name из массива
-    cardTemplate.querySelector('.element__name').textContent = item.name;
 
-    //навешиваю событие на кнопку "УДАЛИТЬ" - удалить DOM node cardTemplate
-    const deleteButton = cardTemplate.querySelector('.element__trash');
-    deleteButton.addEventListener('click', () => {
-        cardTemplate.remove();
-    });
-    //навешиваю слушатель события на новую кнопку ЛАЙКА
-    const likeButton = cardTemplate.querySelector('.element__like');
-    likeButton.addEventListener('click', () => {
-        likeButton.classList.toggle('element__like_active')
-    });
-    //навешиваю событие при клике на КАРТИНКУ
-    const maskGroup = cardTemplate.querySelector('.element__button-mask-group');
-    maskGroup.addEventListener('click', function (event) {
-        //определяю на какой элемент кликнули
-        const maskGroupTarget = event.target;
-        //извелкаю из кода кликнутого элемента путь к КАРТИНКЕ (src)
-        const maskGroupTargetImage = maskGroupTarget.getAttribute('src');
-        //вставляю путь КАРТИНКИ  в ПОПАП КАРТИНКИ
-        document.querySelector('.popup__mask-group-full-size').setAttribute("src", maskGroupTargetImage)
-        //извлекаю название КАРТИНКИ
-        const elementName = event.currentTarget.parentElement.querySelector('.element__name').textContent;
-        //вставляю название КАРТИНКИ в ПОПАП КАРТИНКИ
-        document.querySelector('.popup__title-mask-group').textContent = elementName;
-        //вставляю атрибут alt в тэг КАРТИНКИ
-        document.querySelector('.popup__mask-group-full-size').setAttribute("alt", elementName)
-        //открываю ПОПАП КАРТИНКИ
-        openPopup(popupImage);
-    });
-    return cardTemplate;
-};
-// создаю массив с начальными карточками, помещая его в переменную
+// создаю массив с начальными карточками
 const renderedCards = initialCards.map((item) => {
-    return createCardDomNode(item)
+    const newCard = new Card(imagePopup, imagePopupTitle, item, template);
+    return newCard.renderCard();
 });
+
 // вставляю массив с начальными карточками в elements
 elements.append(...renderedCards);
 
@@ -210,12 +171,16 @@ function handleAddSubmitForm(evt) {
     evt.preventDefault();
     // соpдаю новую карточку функцией создания Дом Нода карточкии 
     // в качестве параметров функции использую значения, полученные в input
-    const newCard = createCardDomNode({
+    const item = {
         name: inputElementName.value,
         link: inputElementMaskGroup.value
-    });
-    //вставляю разметку с добавленной карточкой в elements
-    elements.prepend(newCard);
+    };
+    //клонирую ДомНоду карточки
+    const newCard = new Card(imagePopup, imagePopupTitle, item, template);
+    //вставляю контент из инпута в карточку
+    const renderedNewCard = newCard.renderCard();
+    //вставляю разметку добавленной карточкои в elements
+    elements.prepend(renderedNewCard);
     //обнуляю поля формы для следующего ввода
     eraseInputText()
     //закрываю ПОПАП функцией
@@ -264,3 +229,23 @@ popups.forEach((popup) => {
         }
     })
 })
+
+const popupEditInfoValidator = new FormValidator({
+    inputSelector: '.form__input',
+    submitButtonSelector: '.popup__save-button',
+    inactiveButtonClass: 'popup__save-button_disabled',
+    inputErrorClass: 'form__input_error',
+    errorClass: 'popup__error_visible',
+}, formEditInfo);
+
+popupEditInfoValidator.enableValidation();
+
+const popupAddElementValidator = new FormValidator({
+    inputSelector: '.form__input',
+    submitButtonSelector: '.popup__save-button',
+    inactiveButtonClass: 'popup__save-button_disabled',
+    inputErrorClass: 'form__input_error',
+    errorClass: 'popup__error_visible',
+}, formAddElement);
+
+popupAddElementValidator.enableValidation();

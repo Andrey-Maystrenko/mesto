@@ -1,4 +1,5 @@
 .element__mask-group {
-    max-width: 150%;
+    /* max-width: 150%; */
+    min-width: 282px;
     height   : 282px;
 }
