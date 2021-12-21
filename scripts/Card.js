@@ -1,16 +1,20 @@
 import { openPopup } from './utils.js';
-// помещаю в переменную ПОПАП для КАРТИНКИ full size
-const popupImage = document.querySelector('.popup_mask-group');
 
 export class Card {
-    constructor(imagePopup, imagePopupTitle, card, template) {
+    constructor(imagePopup, imagePopupTitle, card, templateSelector) {
         this.imagePopup = imagePopup;
         this.imagePopupTitle = imagePopupTitle;
         this.card = card;
-        this.template = template;
+        this.templateSelector = templateSelector;
+        // помещаю в переменную ПОПАП для КАРТИНКИ full size
+        this.popupImage = document.querySelector('.popup_mask-group');
     }
     _createCardDomNode() {
-        this._cardTemplate = this.template.content.querySelector('.element').cloneNode(true);
+        this._cardTemplate = document
+            .querySelector(this.templateSelector)
+            .content
+            .querySelector('.element')
+            .cloneNode(true);
     }
 
     renderCard() {
@@ -48,7 +52,7 @@ export class Card {
         //вставляю атрибут alt в тэг КАРТИНКИ
         this.imagePopup.setAttribute("alt", elementName);
         //вставляю метод для открытия ПОПАПА КАРТИНКИ
-        openPopup(popupImage)
+        openPopup(this.popupImage)
     }
 
     _addEventListeners() {

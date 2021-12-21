@@ -1,5 +1,7 @@
 import { Card } from './Card.js';
 import { FormValidator } from './FormValidator.js';
+import { openPopup } from './utils.js';
+import { closePopup } from './utils.js';
 
 //помещаю в переменную ПОПАП для Edit button
 const popupEditInfo = document.querySelector('.popup_edit-info');
@@ -55,12 +57,19 @@ const imagePopup = document.querySelector('.popup__mask-group-full-size');
 //помещаю в переменную html код НАЗВАНИЯ КАРТИНКИ ПОПАПА КАРИНКИ
 const imagePopupTitle = document.querySelector('.popup__title-mask-group');
 
-const openedPopup = `'.popup_opened'`;
+const config = {
+    inputSelector: '.form__input',
+    submitButtonSelector: '.popup__save-button',
+    inactiveButtonClass: 'popup__save-button_disabled',
+    inputErrorClass: 'form__input_error',
+    errorClass: 'popup__error_visible',
+}
 
 //помещаю в переменную код элемента с классом .elements
 const elements = document.querySelector('.elements');
-//помещаю в переменнную код разметки карточки template
-const template = document.querySelector('.template');
+
+//помещаю в переменнную селектор template'a разметки карточки 
+const templateSelector = ".template";
 
 // задаю массив с начальным содержанием карточек
 const initialCards = [
@@ -90,29 +99,6 @@ const initialCards = [
     }
 ];
 
-// создаю массив с начальными карточками
-const renderedCards = initialCards.map((item) => {
-    const newCard = new Card(imagePopup, imagePopupTitle, item, template);
-    return newCard.renderCard();
-});
-
-// вставляю массив с начальными карточками в elements
-elements.append(...renderedCards);
-
-//задаю функцию открытия ПОПАПА
-function openPopup(popupElement) {
-    //добавяю в код ПОПАПА класс, отвечающий за отображение ПОПАПА
-    popupElement.classList.add('popup_opened');
-    //навешиваю событие закрытия ПОПАПА по нажатию esc
-    document.addEventListener('keydown', closeByEsc);
-}
-//задаю функцию закрытия ПОПАПА - удаляю из кода ПОПАПА класс, отвечающий за отображение ПОПАПА
-function closePopup(popupElement) {
-    //удаляяю событие закрытия ПОПАПА по нажатию esc
-    document.removeEventListener('keydown', closeByEsc);
-    //удаляю клас, отвечающий за отображение ПОПАПА
-    popupElement.classList.remove('popup_opened');
-};
 //задаю функцию удаления индикации поля при ошибке
 function removeErrorIndication() {
     inputFields.forEach(item => {
@@ -138,14 +124,7 @@ function deactivateSaveButton() {
         item.classList.add('popup__save-button_disabled');
     });
 }
-//задаю функцию закрытия ПОПАПА по нажатию esc
-function closeByEsc(evt) {
-    //помещаю в переменную элемент открытого в настоящий момент ПОПАПА
-    if (evt.key === 'Escape') {
-        const openedPopup = document.querySelector('.popup_opened');
-        closePopup(openedPopup);
-    }
-}
+
 // Обработчик «отправки» формы Edit info
 // задаю функцию сохранения значний полей ИМЯ и РОД ЗАНЯТИЙ
 function handleEditSubmitForm(evt) {
@@ -176,7 +155,7 @@ function handleAddSubmitForm(evt) {
         link: inputElementMaskGroup.value
     };
     //клонирую ДомНоду карточки
-    const newCard = new Card(imagePopup, imagePopupTitle, item, template);
+    const newCard = new Card(imagePopup, imagePopupTitle, item, templateSelector);
     //вставляю контент из инпута в карточку
     const renderedNewCard = newCard.renderCard();
     //вставляю разметку добавленной карточкои в elements
@@ -221,31 +200,26 @@ addButton.addEventListener('click', () => {
 //программирую закрытие ПОПАПА по клику (на крестик или на оверлей)
 popups.forEach((popup) => {
     popup.addEventListener('click', (evt) => {
-        if (evt.target.classList.contains('popup_opened')) {
-            closePopup(popup)
-        }
-        if (evt.target.classList.contains('popup__close-button')) {
+        if ((evt.target.classList.contains('popup_opened')) ||
+            (evt.target.classList.contains('popup__close-button'))) {
             closePopup(popup)
         }
     })
-})
+});
 
-const popupEditInfoValidator = new FormValidator({
-    inputSelector: '.form__input',
-    submitButtonSelector: '.popup__save-button',
-    inactiveButtonClass: 'popup__save-button_disabled',
-    inputErrorClass: 'form__input_error',
-    errorClass: 'popup__error_visible',
-}, formEditInfo);
+// создаю массив с начальными карточками
+const renderedCards = initialCards.map((item) => {
+    const newCard = new Card(imagePopup, imagePopupTitle, item, templateSelector);
+    return newCard.renderCard();
+});
+
+// вставляю массив с начальными карточками в elements
+elements.append(...renderedCards);
+
+const popupEditInfoValidator = new FormValidator(config, formEditInfo);
 
 popupEditInfoValidator.enableValidation();
 
-const popupAddElementValidator = new FormValidator({
-    inputSelector: '.form__input',
-    submitButtonSelector: '.popup__save-button',
-    inactiveButtonClass: 'popup__save-button_disabled',
-    inputErrorClass: 'form__input_error',
-    errorClass: 'popup__error_visible',
-}, formAddElement);
+const popupAddElementValidator = new FormValidator(config, formAddElement);
 
 popupAddElementValidator.enableValidation();
