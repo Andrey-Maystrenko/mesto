@@ -1,13 +1,14 @@
-import { openPopup } from './utils.js';
+import { PopupWithImage } from './PopupWithImage.js';
+
+const popupWithImage = new PopupWithImage(
+    document.querySelector('.popup__mask-group-full-size'),
+    document.querySelector('.popup__title-mask-group'),
+    '.popup_mask-group')
 
 export class Card {
-    constructor(imagePopup, imagePopupTitle, card, templateSelector) {
-        this.imagePopup = imagePopup;
-        this.imagePopupTitle = imagePopupTitle;
+    constructor(card, templateSelector) {
         this.card = card;
         this.templateSelector = templateSelector;
-        // помещаю в переменную ПОПАП для КАРТИНКИ full size
-        this.popupImage = document.querySelector('.popup_mask-group');
     }
     _createCardDomNode() {
         this._cardTemplate = document
@@ -26,7 +27,6 @@ export class Card {
         this._cardTemplate.querySelector('.element__name').textContent = this.card.name;
         this._addEventListeners();
         return this._cardTemplate;
-
     }
 
     _deleteCard = () => {
@@ -38,26 +38,9 @@ export class Card {
         _likeButton.classList.toggle('element__like_active');
     }
 
-    _openMaskGroupPopup = (event) => {
-        //определяю на какой элемент кликнули
-        const maskGroupTarget = event.target;
-        //извелкаю из кода кликнутого элемента путь к КАРТИНКЕ (src)
-        const maskGroupTargetImage = maskGroupTarget.getAttribute('src');
-        //вставляю путь КАРТИНКИ  в ПОПАП КАРТИНКИ
-        this.imagePopup.setAttribute("src", maskGroupTargetImage);
-        //извлекаю название КАРТИНКИ
-        const elementName = event.currentTarget.parentElement.querySelector('.element__name').textContent;
-        //вставляю название КАРТИНКИ в ПОПАП КАРТИНКИ
-        this.imagePopupTitle.textContent = elementName;
-        //вставляю атрибут alt в тэг КАРТИНКИ
-        this.imagePopup.setAttribute("alt", elementName);
-        //вставляю метод для открытия ПОПАПА КАРТИНКИ
-        openPopup(this.popupImage)
-    }
-
     _addEventListeners() {
         this._cardTemplate.querySelector('.element__trash').addEventListener('click', this._deleteCard);
         this._cardTemplate.querySelector('.element__like').addEventListener('click', this._likeCard);
-        this._cardTemplate.querySelector('.element__button-mask-group').addEventListener('click', this._openMaskGroupPopup);
+        this._cardTemplate.querySelector('.element__button-mask-group').addEventListener('click', popupWithImage._handleCardClick);
     }
 }

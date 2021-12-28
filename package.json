@@ -1,0 +1,38 @@
+{
+  "name": "mesto",
+  "version": "1.0.0",
+  "description": "*Заголовок сайта:*\r Mesto https://andrey-maystrenko.github.io/mesto/\r **Учебный проект студента Яндекс-Практикума**\r Сайт содержит галерею фотографий и информацию об их авторе.\r Сайт имеет функциональность: возможность изменения автора и описания рода его занятий, возможность добавлять и удалять фотографии из галеери, возможность ставить лайк фотографиям.",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Andrey-Maystrenko/mesto.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Andrey-Maystrenko/mesto/issues"
+  },
+  "homepage": "https://github.com/Andrey-Maystrenko/mesto#readme",
+  "devDependencies": {
+    "@babel/core": "^7.16.5",
+    "@babel/preset-env": "^7.16.5",
+    "autoprefixer": "^10.4.0",
+    "babel-loader": "^8.2.3",
+    "clean-webpack-plugin": "^4.0.0",
+    "css-loader": "^6.5.1",
+    "cssnano": "^5.0.14",
+    "html-webpack-plugin": "^5.5.0",
+    "mini-css-extract-plugin": "^2.4.5",
+    "postcss-loader": "^6.2.1",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.7.1"
+  },
+  "dependencies": {
+    "core-js": "^3.20.1"
+  }
+}

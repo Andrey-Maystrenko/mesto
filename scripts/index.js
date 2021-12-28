@@ -1,13 +1,17 @@
 import { Card } from './Card.js';
 import { FormValidator } from './FormValidator.js';
-import { openPopup } from './utils.js';
-import { closePopup } from './utils.js';
+import { Section } from './Section.js';
+import { Popup } from './Popup.js';
+import { PopupWithForm } from './PopupWithForm.js';
+import { UserInfo } from './UserInfo.js';
+import '../pages/index.css';
 
-//помещаю в переменную ПОПАП для Edit button
-const popupEditInfo = document.querySelector('.popup_edit-info');
-
-// помещаю в переменную ПОПАП для Add button
-const popupAddElement = document.querySelector('.popup_add-element');
+const editInfoPopup = new Popup('.popup_edit-info');
+const addElementPopup = new Popup('.popup_add-element');
+const userInfo = new UserInfo({
+    userNameSelector: '.info__name',
+    userInfoSelector: '.info__engagement'
+});
 
 //помещаю код кнопки "Редактировать" инфо в константу
 const editButton = document.querySelector('.info__edit-button');
@@ -21,24 +25,6 @@ const formEditInfo = document.querySelector('.form_edit-info');
 //помещаю код всей ФОРМЫ ввода для "Form element" в константу
 const formAddElement = document.querySelector('.form_add-element');
 
-//помеащю код ИМЕНИ в блоке ИНФО в переменную
-const infoName = document.querySelector('.info__name');
-
-//помещаю код РОДА ЗАНЯТИЙ в блоке ИНФО в переменную
-const infoEngagement = document.querySelector('.info__engagement');
-
-// помещаю в переменную код поля ввода ИМЕНИ автора
-const inputName = document.querySelector('.form__input_info_name');
-
-// помещаю в переменную код поля ввода РОДА ЗАНЯТИЙ автора
-const inputEngagement = document.querySelector('.form__input_info_engagement');
-
-//помещаю код поля ввода НАЗВАНИЯ КАРТИНКИ в константу
-const inputElementName = document.querySelector('.form__input_element_name');
-
-//помещаю код поля ввода ССЫЛКИ НА КАРТИНКИ в константу
-const inputElementMaskGroup = document.querySelector('.form__input_element_mask-group');
-
 //помещаю в переменную массив со всеми кнопками сохранения/отправки формы ПОПАПОВ
 const saveButtons = document.querySelectorAll('.popup__save-button');
 
@@ -48,15 +34,6 @@ const inputFields = document.querySelectorAll('.form__input');
 //помещаю в переменную массив со всеми span'ами с текстом ошибки
 const errorTexts = document.querySelectorAll('.popup__error');
 
-//помещаю в переменную массив со всеми ПОПАПАМИ
-const popups = document.querySelectorAll('.popup');
-
-//помещаю в переменную html код КАРТИНКИ ПОПАПА КАРИНКИ
-const imagePopup = document.querySelector('.popup__mask-group-full-size');
-
-//помещаю в переменную html код НАЗВАНИЯ КАРТИНКИ ПОПАПА КАРИНКИ
-const imagePopupTitle = document.querySelector('.popup__title-mask-group');
-
 const config = {
     inputSelector: '.form__input',
     submitButtonSelector: '.popup__save-button',
@@ -65,9 +42,6 @@ const config = {
     errorClass: 'popup__error_visible',
 }
 
-//помещаю в переменную код элемента с классом .elements
-const elements = document.querySelector('.elements');
-
 //помещаю в переменнную селектор template'a разметки карточки 
 const templateSelector = ".template";
 
@@ -75,30 +49,29 @@ const templateSelector = ".template";
 const initialCards = [
     {
         name: 'Анапа',
-        link: './images/anapa.jpg'
+        link: require('../images/anapa.jpg')
     },
     {
         name: 'Новороссийск',
-        link: './images/novorossiysk.jpg'
+        link: require('../images/novorossiysk.jpg')
     },
     {
         name: 'Геленджик',
-        link: './images/gelendzhik.jpg'
+        link: require('../images/gelendzhik.jpg')
     },
     {
         name: 'Лазаревское',
-        link: './images/lazarevskoe.jpg'
+        link: require('../images/lazarevskoe.jpg')
     },
     {
         name: 'Сочи',
-        link: './images/sochi.jpg'
+        link: require('../images/sochi.jpg')
     },
     {
         name: 'Адлер',
-        link: './images/adler.jpg'
+        link: require('../images/adler.jpg')
     }
 ];
-
 //задаю функцию удаления индикации поля при ошибке
 function removeErrorIndication() {
     inputFields.forEach(item => {
@@ -124,58 +97,50 @@ function deactivateSaveButton() {
         item.classList.add('popup__save-button_disabled');
     });
 }
-
-// Обработчик «отправки» формы Edit info
-// задаю функцию сохранения значний полей ИМЯ и РОД ЗАНЯТИЙ
-function handleEditSubmitForm(evt) {
+//созодаю обработчик формы edit info
+// создаю экземпляр класса PopupWithForm для попапа edit info
+const editInfoPopupForm = new PopupWithForm('.popup_edit-info', (evt) => {
     // Эта строчка отменяет стандартную отправку формы.
     evt.preventDefault();
-    // const popupElement = document.querySelector('.popup_edit-info');
-    //вставляю в код ИМЕНИ в блоке ИНФО значение поля ввода ИМЕНИ
-    infoName.textContent = inputName.value;
-    //вставляю в код РОДА ЗАНЯТИЙ в блоке ИНФО значение поля ввода РОДА ЗАНЯТИЙ
-    infoEngagement.textContent = inputEngagement.value;
-    //закрываю ПОПАП функцией
-    closePopup(popupEditInfo);
-}
-// Прикрепляем обработчик к форме:
-//во всем коде, вложенном в тэг с классом .form_edit-info ищем тэг с типом 'submit'
-// и в случае submit=true запускаем функцию "отправки" формы
-formEditInfo.addEventListener('submit', handleEditSubmitForm);
 
-// Обработчик «отправки» формы Add element
-// задаю функцию клонирования element из полей ввода name и link
-function handleAddSubmitForm(evt) {
+    userInfo.setUserInfo(
+        editInfoPopupForm._getInputValues()[0],
+        editInfoPopupForm._getInputValues()[1]
+    );
+    editInfoPopupForm.close();
+})
+// Прикрепляем обработчик к форме в созданном экземпляре попапа
+editInfoPopupForm.setEventListeners();
+
+// создаю обработчик для формы add element
+// создаю экземпляр класса PopupWithForm для попапа add element
+const addElementPopupForm = new PopupWithForm('.popup_add-element', (evt) => {
     // Эта строчка отменяет стандартную отправку формы.
     evt.preventDefault();
-    // соpдаю новую карточку функцией создания Дом Нода карточкии 
     // в качестве параметров функции использую значения, полученные в input
     const item = {
-        name: inputElementName.value,
-        link: inputElementMaskGroup.value
+        name: addElementPopupForm._getInputValues()[0],
+        link: addElementPopupForm._getInputValues()[1]
     };
     //клонирую ДомНоду карточки
-    const newCard = new Card(imagePopup, imagePopupTitle, item, templateSelector);
+    const newCard = new Card(item, templateSelector);
     //вставляю контент из инпута в карточку
     const renderedNewCard = newCard.renderCard();
     //вставляю разметку добавленной карточкои в elements
-    elements.prepend(renderedNewCard);
-    //обнуляю поля формы для следующего ввода
-    eraseInputText()
-    //закрываю ПОПАП функцией
-    closePopup(popupAddElement);
-}
-// Прикрепляем обработчик к форме:
-//во всем коде, вложенном в тэг с классом .form_add-element ищем тэг с типом 'submit'
-// и в случае submit=true запускаем функцию "отправки" формы
-formAddElement.addEventListener('submit', handleAddSubmitForm);
+    section.addItem(renderedNewCard);
+    // закрываю попап методом из класса PopupWithForm, содержащий очистку полей
+    addElementPopupForm.close()
+});
+// Прикрепляем обработчик к форме в созданном экземпляре попапа
+addElementPopupForm.setEventListeners();
 
 //программирую нажатие кнопки "Редактировать" (editButton)
 editButton.addEventListener('click', () => {
-    //задаю значение поля ввода ИМЕНИ - извлекаю текст из кода ИМЕНИ в блоке ИНФО
-    inputName.value = infoName.textContent;
-    //задаю значение поля ввода РОДА ЗАНЯТИЙ - извлекаю текст из кода РОДА ЗАНЯТИЙ в блоке ИНФО
-    inputEngagement.value = infoEngagement.textContent;
+    //получаю объект с данными пользователя
+    const user = userInfo.getUserInfo();
+    //помещаю полученные данные пользователя в разметку блока Info
+    // и поля формы при первом открытии 
+    userInfo.setUserInfo(user.name, user.info);
     //удаляю индикацию поля при ошибке
     removeErrorIndication()
     //удаляю текст сообщения об ошибке для всех полей ПОПАПА
@@ -183,7 +148,8 @@ editButton.addEventListener('click', () => {
     //деактивирую кнопку сохранения ПОПАПА
     deactivateSaveButton();
     //открываю попап для кнопки "Редактировать"
-    openPopup(popupEditInfo);
+    editInfoPopup.open();
+    // openPopup(popupEditInfo);
 });
 // программирую нажатие кнопки "Добавить" (+) (addButton)
 addButton.addEventListener('click', () => {
@@ -195,27 +161,23 @@ addButton.addEventListener('click', () => {
     eraseInputText()
     //деактивирую кнопку сохранения ПОПАПА
     deactivateSaveButton();
-    openPopup(popupAddElement);
+    // openPopup(popupAddElement);
+    addElementPopup.open();
 });
-//программирую закрытие ПОПАПА по клику (на крестик или на оверлей)
-popups.forEach((popup) => {
-    popup.addEventListener('click', (evt) => {
-        if ((evt.target.classList.contains('popup_opened')) ||
-            (evt.target.classList.contains('popup__close-button'))) {
-            closePopup(popup)
-        }
-    })
-});
+// создаю массив с начальными карточками через создание экзепляра класса Section
+const section = new Section({
+    // задаю значения параметров конструктора класса Section
+    items: initialCards,
+    renderer: (item) => {
+        const newCard = new Card(item, templateSelector);
+        return newCard.renderCard();
+    }
+},
+    '.elements');
 
-// создаю массив с начальными карточками
-const renderedCards = initialCards.map((item) => {
-    const newCard = new Card(imagePopup, imagePopupTitle, item, templateSelector);
-    return newCard.renderCard();
-});
+section.renderSection();
 
-// вставляю массив с начальными карточками в elements
-elements.append(...renderedCards);
-
+// задаю правила валидации через создание экзепляров класса FormValidate для каждого попапа с формой ввода
 const popupEditInfoValidator = new FormValidator(config, formEditInfo);
 
 popupEditInfoValidator.enableValidation();
