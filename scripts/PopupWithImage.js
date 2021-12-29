@@ -13,7 +13,7 @@ export class PopupWithImage extends Popup {
         super.setEventListeners();
     }
 
-    _handleCardClick = (event) => {
+    handleCardClick = (event) => {
         //определяю на какой элемент кликнули
         const maskGroupTarget = event.target;
         //извелкаю из кода кликнутого элемента путь к КАРТИНКЕ (src)

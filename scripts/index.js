@@ -5,7 +5,12 @@ import { Popup } from './Popup.js';
 import { PopupWithForm } from './PopupWithForm.js';
 import { UserInfo } from './UserInfo.js';
 import '../pages/index.css';
+import { PopupWithImage } from './PopupWithImage.js';
 
+const popupWithImage = new PopupWithImage(
+    document.querySelector('.popup__mask-group-full-size'),
+    document.querySelector('.popup__title-mask-group'),
+    '.popup_mask-group');
 const editInfoPopup = new Popup('.popup_edit-info');
 const addElementPopup = new Popup('.popup_add-element');
 const userInfo = new UserInfo({
@@ -123,7 +128,7 @@ const addElementPopupForm = new PopupWithForm('.popup_add-element', (evt) => {
         link: addElementPopupForm._getInputValues()[1]
     };
     //клонирую ДомНоду карточки
-    const newCard = new Card(item, templateSelector);
+    const newCard = new Card(item, templateSelector, popupWithImage.handleCardClick);
     //вставляю контент из инпута в карточку
     const renderedNewCard = newCard.renderCard();
     //вставляю разметку добавленной карточкои в elements
@@ -169,7 +174,7 @@ const section = new Section({
     // задаю значения параметров конструктора класса Section
     items: initialCards,
     renderer: (item) => {
-        const newCard = new Card(item, templateSelector);
+        const newCard = new Card(item, templateSelector, popupWithImage.handleCardClick);
         return newCard.renderCard();
     }
 },

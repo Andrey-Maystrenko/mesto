@@ -1,14 +1,10 @@
-import { PopupWithImage } from './PopupWithImage.js';
 
-const popupWithImage = new PopupWithImage(
-    document.querySelector('.popup__mask-group-full-size'),
-    document.querySelector('.popup__title-mask-group'),
-    '.popup_mask-group')
 
 export class Card {
-    constructor(card, templateSelector) {
+    constructor(card, templateSelector, handleCardClick) {
         this.card = card;
         this.templateSelector = templateSelector;
+        this.handleCardClick = handleCardClick;
     }
     _createCardDomNode() {
         this._cardTemplate = document
@@ -41,6 +37,6 @@ export class Card {
     _addEventListeners() {
         this._cardTemplate.querySelector('.element__trash').addEventListener('click', this._deleteCard);
         this._cardTemplate.querySelector('.element__like').addEventListener('click', this._likeCard);
-        this._cardTemplate.querySelector('.element__button-mask-group').addEventListener('click', popupWithImage._handleCardClick);
+        this._cardTemplate.querySelector('.element__button-mask-group').addEventListener('click', this.handleCardClick);
     }
 }
