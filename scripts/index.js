@@ -11,6 +11,9 @@ const popupWithImage = new PopupWithImage(
     document.querySelector('.popup__mask-group-full-size'),
     document.querySelector('.popup__title-mask-group'),
     '.popup_mask-group');
+
+popupWithImage.setEventListeners();
+
 const editInfoPopup = new Popup('.popup_edit-info');
 const addElementPopup = new Popup('.popup_add-element');
 const userInfo = new UserInfo({

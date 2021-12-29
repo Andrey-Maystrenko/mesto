@@ -6,13 +6,6 @@ export class PopupWithImage extends Popup {
         this.imagePopup = imagePopup;
         this.imagePopupTitle = imagePopupTitle;
     }
-
-    open() {
-        //добавяю в код ПОПАПА класс, отвечающий за отображение ПОПАПА
-        document.querySelector(this.popupSelector).classList.add('popup_opened');
-        super.setEventListeners();
-    }
-
     handleCardClick = (event) => {
         //определяю на какой элемент кликнули
         const maskGroupTarget = event.target;
@@ -27,6 +20,6 @@ export class PopupWithImage extends Popup {
         //вставляю атрибут alt в тэг КАРТИНКИ
         this.imagePopup.setAttribute("alt", elementName);
         //вставляю метод для открытия ПОПАПА КАРТИНКИ
-        this.open()
+        super.open()
     }
 }
