@@ -6,7 +6,7 @@ export class PopupWithForm extends Popup {
         this.submitForm = submitForm;
         this._inputs = this._popup.querySelectorAll('.form__input');
     }
-    _getInputValues() {
+    getInputValues() {
         const inputs = Array.from(this._inputs);
         const values = inputs.map((element) => {
             return element.value;

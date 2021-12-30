@@ -112,8 +112,8 @@ const editInfoPopupForm = new PopupWithForm('.popup_edit-info', (evt) => {
     evt.preventDefault();
 
     userInfo.setUserInfo(
-        editInfoPopupForm._getInputValues()[0],
-        editInfoPopupForm._getInputValues()[1]
+        editInfoPopupForm.getInputValues()[0],
+        editInfoPopupForm.getInputValues()[1]
     );
     editInfoPopupForm.close();
 })
@@ -127,8 +127,8 @@ const addElementPopupForm = new PopupWithForm('.popup_add-element', (evt) => {
     evt.preventDefault();
     // в качестве параметров функции использую значения, полученные в input
     const item = {
-        name: addElementPopupForm._getInputValues()[0],
-        link: addElementPopupForm._getInputValues()[1]
+        name: addElementPopupForm.getInputValues()[0],
+        link: addElementPopupForm.getInputValues()[1]
     };
     //клонирую ДомНоду карточки
     const newCard = new Card(item, templateSelector, popupWithImage.handleCardClick);
@@ -143,32 +143,23 @@ const addElementPopupForm = new PopupWithForm('.popup_add-element', (evt) => {
 addElementPopupForm.setEventListeners();
 
 //программирую нажатие кнопки "Редактировать" (editButton)
-editButton.addEventListener('click', () => {
+editButton.addEventListener('click', function pressEditBatton() {
     //получаю объект с данными пользователя
     const user = userInfo.getUserInfo();
     //помещаю полученные данные пользователя в разметку блока Info
     // и поля формы при первом открытии 
     userInfo.setUserInfo(user.name, user.info);
-    //удаляю индикацию поля при ошибке
-    removeErrorIndication()
-    //удаляю текст сообщения об ошибке для всех полей ПОПАПА
-    deleteErrorMessage()
-    //деактивирую кнопку сохранения ПОПАПА
-    deactivateSaveButton();
+    //очищаю поля ввода от индикации ошибок
+    popupEditInfoValidator.resetValidation();
     //открываю попап для кнопки "Редактировать"
     editInfoPopup.open();
-    // openPopup(popupEditInfo);
 });
 // программирую нажатие кнопки "Добавить" (+) (addButton)
-addButton.addEventListener('click', () => {
-    //удаляю индикацию поля при ошибке
-    removeErrorIndication()
-    //удаляю текст сообщения об ошибке для всех полей ПОПАПА
-    deleteErrorMessage()
+addButton.addEventListener('click', function pressAddButton() {
+    // очищаю поля ввода от индикации ошибок
+    popupAddElementValidator.resetValidation()
     //обнуляю поля формы Add button (+) для следующего ввода
-    eraseInputText()
-    //деактивирую кнопку сохранения ПОПАПА
-    deactivateSaveButton();
+    eraseInputText();
     // openPopup(popupAddElement);
     addElementPopup.open();
 });
@@ -186,10 +177,10 @@ const section = new Section({
 section.renderSection();
 
 // задаю правила валидации через создание экзепляров класса FormValidate для каждого попапа с формой ввода
-const popupEditInfoValidator = new FormValidator(config, formEditInfo);
+const popupEditInfoValidator = new FormValidator(config, formEditInfo, inputFields, errorTexts, saveButtons);
 
 popupEditInfoValidator.enableValidation();
 
-const popupAddElementValidator = new FormValidator(config, formAddElement);
+const popupAddElementValidator = new FormValidator(config, formAddElement, inputFields, errorTexts, saveButtons);
 
 popupAddElementValidator.enableValidation();

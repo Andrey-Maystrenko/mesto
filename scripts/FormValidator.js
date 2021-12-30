@@ -1,8 +1,38 @@
 export class FormValidator {
 
-    constructor(config, formElement) {
+    constructor(config, formElement, inputFields, errorTexts, saveButtons) {
         this.config = config;
         this.formElement = formElement;
+        this.inputFields = inputFields;
+        this.errorTexts = errorTexts;
+        this.saveButtons = saveButtons;
+    }
+
+    //задаю функцию удаления индикации поля при ошибке
+    _removeErrorIndication() {
+        this.inputFields.forEach(item => {
+            item.classList.remove('form__input_error');
+        });
+    }
+    //задаю функцию удаления текста ошибки
+    _deleteErrorMessage() {
+        this.errorTexts.forEach(item => {
+            item.textContent = '';
+        });
+    }
+    //задаю функцию деактивации кнопки сохранения данных ПОПАПА
+    _deactivateSaveButton() {
+        this.saveButtons.forEach((item) => {
+            item.disabled = true;
+            item.classList.add('popup__save-button_disabled');
+        });
+    }
+
+    // объединяю очистку от индикации ошибок в один метод
+    resetValidation() {
+        this._removeErrorIndication();
+        this._deleteErrorMessage();
+        this._deactivateSaveButton()
     }
 
     _hideInputError = (inputField) => {
