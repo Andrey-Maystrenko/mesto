@@ -53,33 +53,49 @@ const config = {
 //помещаю в переменнную селектор template'a разметки карточки 
 const templateSelector = ".template";
 
-// задаю массив с начальным содержанием карточек
-const initialCards = [
-    {
-        name: 'Анапа',
-        link: require('../images/anapa.jpg')
-    },
-    {
-        name: 'Новороссийск',
-        link: require('../images/novorossiysk.jpg')
-    },
-    {
-        name: 'Геленджик',
-        link: require('../images/gelendzhik.jpg')
-    },
-    {
-        name: 'Лазаревское',
-        link: require('../images/lazarevskoe.jpg')
-    },
-    {
-        name: 'Сочи',
-        link: require('../images/sochi.jpg')
-    },
-    {
-        name: 'Адлер',
-        link: require('../images/adler.jpg')
+//запрашиваю с сервера информацию о пользователе - свойства name, about, avatar
+fetch('https://nomoreparties.co/v1/cohort-34/users/me', {
+    headers: {
+        authorization: 'f6c561df-ef33-43f7-885e-c25f80e98ae8'
     }
-];
+})
+    .then(res => res.json())
+    //вставляю информацию из полученного объекта в разметку
+    .then((result) => {
+        // console.log(result)
+        document.querySelector('.info__name').textContent = result.name;
+        document.querySelector('.info__engagement').textContent = result.about;
+        document.querySelector('.avatar').setAttribute("src", result.avatar)
+    }
+    )
+
+// задаю массив с начальным содержанием карточек
+// const initialCards = [
+//     {
+//         name: 'Анапа',
+//         link: require('../images/anapa.jpg')
+//     },
+//     {
+//         name: 'Новороссийск',
+//         link: require('../images/novorossiysk.jpg')
+//     },
+//     {
+//         name: 'Геленджик',
+//         link: require('../images/gelendzhik.jpg')
+//     },
+//     {
+//         name: 'Лазаревское',
+//         link: require('../images/lazarevskoe.jpg')
+//     },
+//     {
+//         name: 'Сочи',
+//         link: require('../images/sochi.jpg')
+//     },
+//     {
+//         name: 'Адлер',
+//         link: require('../images/adler.jpg')
+//     }
+// ];
 //задаю функцию удаления индикации поля при ошибке
 function removeErrorIndication() {
     inputFields.forEach(item => {
@@ -115,6 +131,7 @@ const editInfoPopupForm = new PopupWithForm('.popup_edit-info', (evt) => {
         editInfoPopupForm.getInputValues()[0],
         editInfoPopupForm.getInputValues()[1]
     );
+
     editInfoPopupForm.close();
 })
 // Прикрепляем обработчик к форме в созданном экземпляре попапа
@@ -134,8 +151,29 @@ const addElementPopupForm = new PopupWithForm('.popup_add-element', (evt) => {
     const newCard = new Card(item, templateSelector, popupWithImage.handleCardClick);
     //вставляю контент из инпута в карточку
     const renderedNewCard = newCard.renderCard();
-    //вставляю разметку добавленной карточкои в elements
+    //вставляю разметку добавленной карточкои в elements через создание экз класса Section
+    const section = new Section({
+        // задаю значения параметров конструктора класса Section
+        items: item,
+        renderer: (item) => {
+            const newCard = new Card(item, templateSelector, popupWithImage.handleCardClick);
+            return newCard.renderCard();
+        }
+    },
+        '.elements');
     section.addItem(renderedNewCard);
+    //соханяю добавленную картинку на сервере
+    fetch('https://mesto.nomoreparties.co/v1/cohort-34/cards', {
+        method: 'POST',
+        headers: {
+            authorization: 'f6c561df-ef33-43f7-885e-c25f80e98ae8',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: addElementPopupForm.getInputValues()[0],
+            link: addElementPopupForm.getInputValues()[1]
+        })
+    })
     // закрываю попап методом из класса PopupWithForm, содержащий очистку полей
     addElementPopupForm.close()
 });
@@ -163,18 +201,46 @@ addButton.addEventListener('click', function pressAddButton() {
     // openPopup(popupAddElement);
     addElementPopup.open();
 });
-// создаю массив с начальными карточками через создание экзепляра класса Section
-const section = new Section({
-    // задаю значения параметров конструктора класса Section
-    items: initialCards,
-    renderer: (item) => {
-        const newCard = new Card(item, templateSelector, popupWithImage.handleCardClick);
-        return newCard.renderCard();
+// получаю массив с начальными карточками
+fetch('https://mesto.nomoreparties.co/v1/cohort-34/cards', {
+    headers: {
+        authorization: 'f6c561df-ef33-43f7-885e-c25f80e98ae8'
     }
-},
-    '.elements');
+})
+    .then(res => res.json())
+    .then(initialCards => {
+        // отрисовываю массив с начальными карточками через создание экзепляра класса Section
+        const section = new Section({
+            // задаю значения параметров конструктора класса Section
+            items: initialCards,
+            renderer: (item) => {
+                console.log(item);
+                const newCard = new Card(item, templateSelector, popupWithImage.handleCardClick);
+                return newCard.renderCard();
+            }
+        },
+            '.elements');
 
-section.renderSection();
+        section.renderSection();
+    })
+// //вывожу количество лайков для каждой карточки
+// function checkLikeAmount() {
+//     fetch('https://mesto.nomoreparties.co/v1/cohort-34/cards', {
+//         headers: {
+//             authorization: 'f6c561df-ef33-43f7-885e-c25f80e98ae8'
+//         }
+//     })
+//         .then(res => res.json())
+//         .then(result => {
+//             console.log(result)
+//             result.forEach(item =>
+
+//                 console.log(item.likes.length)
+//             )
+//         })
+// }
+// checkLikeAmount()
+// // setInterval(checkLikeAmount, 3000)
 
 // задаю правила валидации через создание экзепляров класса FormValidate для каждого попапа с формой ввода
 const popupEditInfoValidator = new FormValidator(config, formEditInfo, inputFields, errorTexts, saveButtons);
