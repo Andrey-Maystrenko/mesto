@@ -201,6 +201,17 @@ addButton.addEventListener('click', function pressAddButton() {
     // openPopup(popupAddElement);
     addElementPopup.open();
 });
+
+// //программирую нажатие кнопки "Удалить"
+// const trashButton = document.querySelector('.element__trash');
+// console.log(`разметка трэш`, trashButton)
+
+// const popupDelete = document.querySelector('.popup_delete');
+// console.log(`разметка попапа Удалить`, popupDelete)
+// console.log(`разметка кнопки Лайк`, document.querySelector('.element__like'))
+// trashButton.addEventListener('click', () => {
+//     popupDelete.open()
+// })
 // получаю массив с начальными карточками
 fetch('https://mesto.nomoreparties.co/v1/cohort-34/cards', {
     headers: {
@@ -214,7 +225,6 @@ fetch('https://mesto.nomoreparties.co/v1/cohort-34/cards', {
             // задаю значения параметров конструктора класса Section
             items: initialCards,
             renderer: (item) => {
-                console.log(item);
                 const newCard = new Card(item, templateSelector, popupWithImage.handleCardClick);
                 return newCard.renderCard();
             }
@@ -223,25 +233,6 @@ fetch('https://mesto.nomoreparties.co/v1/cohort-34/cards', {
 
         section.renderSection();
     })
-// //вывожу количество лайков для каждой карточки
-// function checkLikeAmount() {
-//     fetch('https://mesto.nomoreparties.co/v1/cohort-34/cards', {
-//         headers: {
-//             authorization: 'f6c561df-ef33-43f7-885e-c25f80e98ae8'
-//         }
-//     })
-//         .then(res => res.json())
-//         .then(result => {
-//             console.log(result)
-//             result.forEach(item =>
-
-//                 console.log(item.likes.length)
-//             )
-//         })
-// }
-// checkLikeAmount()
-// // setInterval(checkLikeAmount, 3000)
-
 // задаю правила валидации через создание экзепляров класса FormValidate для каждого попапа с формой ввода
 const popupEditInfoValidator = new FormValidator(config, formEditInfo, inputFields, errorTexts, saveButtons);
 

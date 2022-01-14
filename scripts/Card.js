@@ -1,4 +1,4 @@
-
+import { PopupWithForm } from "./PopupWithForm";
 
 export class Card {
     constructor(card, templateSelector, handleCardClick) {
@@ -21,17 +21,25 @@ export class Card {
         this._cardTemplate.querySelector('.element__mask-group').setAttribute("alt", this.card.name);
         //получаю html код названия карточки и задаю ему название name из массива
         this._cardTemplate.querySelector('.element__name').textContent = this.card.name;
+        //вставляю количество лайков в разметку
+        this._cardTemplate.querySelector('.element__like-amount').textContent = this.card.likes.length
         this._addEventListeners();
         return this._cardTemplate;
     }
 
     _deleteCard = () => {
-        this._cardTemplate.remove();
+        const popupDelete = new PopupWithForm('.popup_delete', (evt) => {
+            evt.preventDefault();
+            this._cardTemplate.remove();
+            popupDelete.close();
+        });
+        popupDelete.open();
+        popupDelete.setEventListeners();
     }
-
     _likeCard = () => {
         const _likeButton = this._cardTemplate.querySelector('.element__like');
         _likeButton.classList.toggle('element__like_active');
+
     }
 
     _addEventListeners() {
@@ -40,3 +48,5 @@ export class Card {
         this._cardTemplate.querySelector('.element__button-mask-group').addEventListener('click', this.handleCardClick);
     }
 }
+
+
