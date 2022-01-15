@@ -43,7 +43,7 @@
             <input class="form__input form__input_info_engagement" type="text" name="info__engagement" required
               minlength="2" maxlength="200" id="form__input_info_engagement" placeholder="Род занятий">
             <span class="popup__error" id="info__engagement"></span>
-            <button class="popup__save-button" type="submit">
+            <button class="popup__save-button" id="edit-info" type="submit">
               <span class="popup__save-button-text">Сохранить</span>
             </button>
           </form>
@@ -62,7 +62,7 @@
             <input class="form__input form__input_element_mask-group" type="url" placeholder="Ссылка на картинку"
               name="element__mask-group" required id="form__input_element_mask-group">
             <span class="popup__error" id="element__mask-group"></span>
-            <button class="popup__save-button" type="submit">
+            <button class="popup__save-button" id="add-element" type="submit">
               <span class="popup__save-button-text">Создать</span>
             </button>
           </form>
@@ -86,7 +86,7 @@
       <section class="popup__content">
         <h3 class="popup__title">Вы уверены?</h3>
         <form class="form form_delete" name="delete" novalidate>
-          <button class="popup__save-button" type="submit">
+          <button class="popup__save-button" id="delete" type="submit">
             <span class="popup__save-button-text">Да</span>
           </button>
         </form>
@@ -105,9 +105,8 @@
           <button class="element__like" type="button"></button>
           <p class="element__like-amount"></p>
         </div>
-
       </div>
-      <button class="element__trash" type="button"></button>
+      <!-- <button class="element__trash" type="button"></button> -->
     </div>
   </template>
 

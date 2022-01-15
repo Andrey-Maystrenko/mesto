@@ -33,6 +33,13 @@ const formEditInfo = document.querySelector('.form_edit-info');
 //помещаю код всей ФОРМЫ ввода для "Form element" в константу
 const formAddElement = document.querySelector('.form_add-element');
 
+
+
+//помещаю код всей ФОРМЫ ввода для "Delete element" в константу
+const formDeleteElement = document.querySelector('.form_delete');
+
+
+
 //помещаю в переменную массив со всеми кнопками сохранения/отправки формы ПОПАПОВ
 const saveButtons = document.querySelectorAll('.popup__save-button');
 
@@ -151,7 +158,10 @@ const addElementPopupForm = new PopupWithForm('.popup_add-element', (evt) => {
     const newCard = new Card(item, templateSelector, popupWithImage.handleCardClick);
     //вставляю контент из инпута в карточку
     const renderedNewCard = newCard.renderCard();
-    //вставляю разметку добавленной карточкои в elements через создание экз класса Section
+    //вставляю в разметку добавленной карточки кнопку trash для удаления карточки
+    renderedNewCard.insertAdjacentHTML('beforeend', '<button class="element__trash" type="button"></button>');
+    renderedNewCard.querySelector('.element__trash').addEventListener('click', newCard._deleteCard);
+    //вставляю разметку добавленной карточкои в elements через создание экземляра класса Section
     const section = new Section({
         // задаю значения параметров конструктора класса Section
         items: item,
@@ -241,3 +251,8 @@ popupEditInfoValidator.enableValidation();
 const popupAddElementValidator = new FormValidator(config, formAddElement, inputFields, errorTexts, saveButtons);
 
 popupAddElementValidator.enableValidation();
+
+// const popupDeleteElementValidator = new FormValidator(config, formDeleteElement, inputFields, errorTexts, saveButtons);
+
+// popupDeleteElementValidator.enableValidation();
+

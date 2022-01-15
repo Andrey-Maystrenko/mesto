@@ -26,6 +26,8 @@ export class FormValidator {
             item.disabled = true;
             item.classList.add('popup__save-button_disabled');
         });
+        document.querySelector('#delete').disabled = false;
+        document.querySelector('#delete').classList.remove('popup__save-button_disabled');
     }
 
     // объединяю очистку от индикации ошибок в один метод

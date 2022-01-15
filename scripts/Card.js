@@ -22,7 +22,7 @@ export class Card {
         //получаю html код названия карточки и задаю ему название name из массива
         this._cardTemplate.querySelector('.element__name').textContent = this.card.name;
         //вставляю количество лайков в разметку
-        this._cardTemplate.querySelector('.element__like-amount').textContent = this.card.likes.length
+        // this._cardTemplate.querySelector('.element__like-amount').textContent = this.card.likes.length
         this._addEventListeners();
         return this._cardTemplate;
     }
@@ -33,6 +33,13 @@ export class Card {
             this._cardTemplate.remove();
             popupDelete.close();
         });
+        // const deleteButton = document.querySelector('.popup_delete').
+        //     querySelector('.popup__save-button');
+
+        // deleteButton.classList.remove('.popup__save-button_disabled');
+        // deleteButton.disabled = false;
+
+        // console.log(deleteButton);
         popupDelete.open();
         popupDelete.setEventListeners();
     }
@@ -43,7 +50,7 @@ export class Card {
     }
 
     _addEventListeners() {
-        this._cardTemplate.querySelector('.element__trash').addEventListener('click', this._deleteCard);
+        // this._cardTemplate.querySelector('.element__trash').addEventListener('click', this._deleteCard);
         this._cardTemplate.querySelector('.element__like').addEventListener('click', this._likeCard);
         this._cardTemplate.querySelector('.element__button-mask-group').addEventListener('click', this.handleCardClick);
     }
