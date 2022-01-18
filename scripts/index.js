@@ -72,7 +72,7 @@ fetch('https://nomoreparties.co/v1/cohort-34/users/me', {
         // console.log(result)
         document.querySelector('.info__name').textContent = result.name;
         document.querySelector('.info__engagement').textContent = result.about;
-        document.querySelector('.avatar').setAttribute("src", result.avatar)
+        document.querySelector('.avatar__photo').setAttribute("src", result.avatar)
     }
     )
 
@@ -103,32 +103,42 @@ fetch('https://nomoreparties.co/v1/cohort-34/users/me', {
 //         link: require('../images/adler.jpg')
 //     }
 // ];
-//задаю функцию удаления индикации поля при ошибке
-function removeErrorIndication() {
-    inputFields.forEach(item => {
-        item.classList.remove('form__input_error');
-    });
+
+//помещаю в переменную разметку аватара
+const avatar = document.querySelector('.avatar');
+//помещаю в переменную попап аватара
+const avatarOverlay = document.querySelector('.avatar__overlay');
+console.log(avatarOverlay)
+function openAvatarPopup() {
+    avatarOverlay.classList.add('popup_opened')
 }
-//задаю функцию удаления текста ошибки
-function deleteErrorMessage() {
-    errorTexts.forEach(item => {
-        item.textContent = '';
-    });
+function closeAvatarPopup() {
+    avatarOverlay.classList.remove('popup_opened')
 }
+//добавляю слушатель события для отображения попапа аватара (для редактирования аватара)
+avatar.addEventListener('mouseover', openAvatarPopup);
+//добавляю слушатель события для исчезновения попапа аватара (для редактирования аватара)
+avatar.addEventListener('mouseout', closeAvatarPopup);
+
+// //создаю обработчик формы редактирования аватара
+// const editAvatarPopupForm = new PopupWithForm('.popup_edit-avatar', (evt) => {
+//     // Эта строчка отменяет стандартную отправку формы.
+//     evt.preventDefault();
+
+//     editAvatarPopupForm.getInputValues()[0];
+
+// })
+
+// //программирую нажатие на аватар
+// avatar.addEventListener('click',)
+
 //задаю функции очистки полей по закрытии ПОПАПА
 function eraseInputText() {
     inputFields.forEach((item) => {
         item.value = '';
     })
 }
-//задаю функцию деактивации кнопки сохранения данных ПОПАПА
-function deactivateSaveButton() {
-    saveButtons.forEach((item) => {
-        item.disabled = true;
-        item.classList.add('popup__save-button_disabled');
-    });
-}
-//созодаю обработчик формы edit info
+//создаю обработчик формы edit info
 // создаю экземпляр класса PopupWithForm для попапа edit info
 const editInfoPopupForm = new PopupWithForm('.popup_edit-info', (evt) => {
     // Эта строчка отменяет стандартную отправку формы.
@@ -149,10 +159,11 @@ editInfoPopupForm.setEventListeners();
 const addElementPopupForm = new PopupWithForm('.popup_add-element', (evt) => {
     // Эта строчка отменяет стандартную отправку формы.
     evt.preventDefault();
-    // в качестве параметров функции использую значения, полученные в input
+    // в качестве параметров функции использую значения, полученные в input и задаю пустой массив лайкнувших
     const item = {
         name: addElementPopupForm.getInputValues()[0],
-        link: addElementPopupForm.getInputValues()[1]
+        link: addElementPopupForm.getInputValues()[1],
+        likes: []
     };
     //клонирую ДомНоду карточки
     const newCard = new Card(item, templateSelector, popupWithImage.handleCardClick);
@@ -160,30 +171,17 @@ const addElementPopupForm = new PopupWithForm('.popup_add-element', (evt) => {
     const renderedNewCard = newCard.renderCard();
     //вставляю в разметку добавленной карточки кнопку trash для удаления карточки
     renderedNewCard.insertAdjacentHTML('beforeend', '<button class="element__trash" type="button"></button>');
+    //навешиваю на кнопку trash слушатель для обработки удаления созданной отдельной карточки
     renderedNewCard.querySelector('.element__trash').addEventListener('click', newCard._deleteCard);
     //вставляю разметку добавленной карточкои в elements через создание экземляра класса Section
     const section = new Section({
         // задаю значения параметров конструктора класса Section
         items: item,
-        renderer: (item) => {
-            const newCard = new Card(item, templateSelector, popupWithImage.handleCardClick);
-            return newCard.renderCard();
-        }
+        renderer: renderedNewCard
     },
         '.elements');
     section.addItem(renderedNewCard);
-    //соханяю добавленную картинку на сервере
-    fetch('https://mesto.nomoreparties.co/v1/cohort-34/cards', {
-        method: 'POST',
-        headers: {
-            authorization: 'f6c561df-ef33-43f7-885e-c25f80e98ae8',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            name: addElementPopupForm.getInputValues()[0],
-            link: addElementPopupForm.getInputValues()[1]
-        })
-    })
+
     // закрываю попап методом из класса PopupWithForm, содержащий очистку полей
     addElementPopupForm.close()
 });
@@ -212,16 +210,6 @@ addButton.addEventListener('click', function pressAddButton() {
     addElementPopup.open();
 });
 
-// //программирую нажатие кнопки "Удалить"
-// const trashButton = document.querySelector('.element__trash');
-// console.log(`разметка трэш`, trashButton)
-
-// const popupDelete = document.querySelector('.popup_delete');
-// console.log(`разметка попапа Удалить`, popupDelete)
-// console.log(`разметка кнопки Лайк`, document.querySelector('.element__like'))
-// trashButton.addEventListener('click', () => {
-//     popupDelete.open()
-// })
 // получаю массив с начальными карточками
 fetch('https://mesto.nomoreparties.co/v1/cohort-34/cards', {
     headers: {
@@ -230,6 +218,7 @@ fetch('https://mesto.nomoreparties.co/v1/cohort-34/cards', {
 })
     .then(res => res.json())
     .then(initialCards => {
+        // console.log(initialCards);
         // отрисовываю массив с начальными карточками через создание экзепляра класса Section
         const section = new Section({
             // задаю значения параметров конструктора класса Section

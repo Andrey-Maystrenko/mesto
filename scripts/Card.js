@@ -6,6 +6,8 @@ export class Card {
         this.templateSelector = templateSelector;
         this.handleCardClick = handleCardClick;
     }
+
+
     _createCardDomNode() {
         this._cardTemplate = document
             .querySelector(this.templateSelector)
@@ -22,30 +24,82 @@ export class Card {
         //получаю html код названия карточки и задаю ему название name из массива
         this._cardTemplate.querySelector('.element__name').textContent = this.card.name;
         //вставляю количество лайков в разметку
-        // this._cardTemplate.querySelector('.element__like-amount').textContent = this.card.likes.length
+        this._cardTemplate.querySelector('.element__like-amount').textContent = this.card.likes.length;
+
+        //соханяю добавленную картинку на сервере
+        fetch('https://mesto.nomoreparties.co/v1/cohort-34/cards', {
+            method: 'POST',
+            headers: {
+                authorization: 'f6c561df-ef33-43f7-885e-c25f80e98ae8',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: this.card.name,
+                link: this.card.link,
+                likes: []
+            })
+        })
+            .then(res => res.json())
+            .then(result => {
+                this.card = result;
+            });
         this._addEventListeners();
         return this._cardTemplate;
     }
-
     _deleteCard = () => {
         const popupDelete = new PopupWithForm('.popup_delete', (evt) => {
             evt.preventDefault();
             this._cardTemplate.remove();
+            fetch(`https://mesto.nomoreparties.co/v1/cohort-34/cards/${this.card._id}`, {
+                method: 'DELETE',
+                headers: {
+                    authorization: 'f6c561df-ef33-43f7-885e-c25f80e98ae8',
+                }
+            })
             popupDelete.close();
         });
-        // const deleteButton = document.querySelector('.popup_delete').
-        //     querySelector('.popup__save-button');
-
-        // deleteButton.classList.remove('.popup__save-button_disabled');
-        // deleteButton.disabled = false;
-
-        // console.log(deleteButton);
         popupDelete.open();
         popupDelete.setEventListeners();
     }
     _likeCard = () => {
         const _likeButton = this._cardTemplate.querySelector('.element__like');
         _likeButton.classList.toggle('element__like_active');
+        if (_likeButton.classList.contains('element__like_active')) {
+            fetch(`https://mesto.nomoreparties.co/v1/cohort-34/cards/${this.card._id}/likes `, {
+                method: 'PUT',
+                headers: {
+                    authorization: 'f6c561df-ef33-43f7-885e-c25f80e98ae8',
+                    'Content-Type': 'application/json'
+                },
+                // body: JSON.stringify({
+                //     likes: this.card.owner.name
+                // })
+            })
+                .then(res => res.json())
+                .then(result => {
+                    console.log(`объект this.card после добавления лайка`, result);
+                    //вставляю новое количество лайков в разметку
+                    this._cardTemplate.querySelector('.element__like-amount').textContent = result.likes.length;
+                })
+        } else {
+            fetch(`https://mesto.nomoreparties.co/v1/cohort-34/cards/${this.card._id}/likes `, {
+                method: 'DELETE',
+                headers: {
+                    authorization: 'f6c561df-ef33-43f7-885e-c25f80e98ae8',
+                    'Content-Type': 'application/json'
+                },
+                // body: JSON.stringify({
+                //     likes: this.card.owner.name
+                // })
+            })
+                .then(res => res.json())
+                .then(result => {
+                    console.log(`объект this.card после снятия лайка`, result);
+                    //вставляю новое количество лайков в разметку
+                    this._cardTemplate.querySelector('.element__like-amount').textContent = result.likes.length;
+                })
+        }
+
 
     }
 

@@ -15,8 +15,13 @@
     </header>
     <main>
       <section class="profile">
-        <!-- <img class="avatar" src="<%=require('./images/avatar.jpg')%>" alt="Аватар"> -->
-        <img class="avatar" alt="Аватар">
+        <div class="avatar">
+          <img class="avatar__photo" alt="Аватар">
+          <div class="avatar__overlay">
+            <img class="avatar__edit-symbol" src="<%=require('./images/EditButton.svg')%>" alt="значок редактирования">
+          </div>
+        </div>
+
         <div class="info">
           <h1 class="info__name"></h1>
           <button class="info__edit-button" type="button"></button>
@@ -69,6 +74,19 @@
         </section>
       </div>
     </div>
+    <div class="popup popup_delete">
+      <div class="popup__window">
+        <button class="popup__close-button popup__close-button_element" type="button"></button>
+        <section class="popup__content">
+          <h3 class="popup__title">Вы уверены?</h3>
+          <form class="form form_delete" name="delete" novalidate>
+            <button class="popup__save-button" id="delete" type="submit">
+              <span class="popup__save-button-text">Да</span>
+            </button>
+          </form>
+        </section>
+      </div>
+    </div>
     <div class="popup popup_mask-group">
       <div class="popup__window-mask-group">
         <button class="popup__close-button popup__close-button_mask-group" type="button"></button>
@@ -80,19 +98,7 @@
     </div>
   </div>
 
-  <div class="popup popup_delete">
-    <div class="popup__window">
-      <button class="popup__close-button popup__close-button_element" type="button"></button>
-      <section class="popup__content">
-        <h3 class="popup__title">Вы уверены?</h3>
-        <form class="form form_delete" name="delete" novalidate>
-          <button class="popup__save-button" id="delete" type="submit">
-            <span class="popup__save-button-text">Да</span>
-          </button>
-        </form>
-      </section>
-    </div>
-  </div>
+
 
   <template class="template">
     <div class="element">
