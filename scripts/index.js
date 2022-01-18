@@ -16,6 +16,7 @@ popupWithImage.setEventListeners();
 
 const editInfoPopup = new Popup('.popup_edit-info');
 const addElementPopup = new Popup('.popup_add-element');
+const editAvatarPopup = new Popup('.popup_edit-avatar');
 const userInfo = new UserInfo({
     userNameSelector: '.info__name',
     userInfoSelector: '.info__engagement'
@@ -33,6 +34,8 @@ const formEditInfo = document.querySelector('.form_edit-info');
 //помещаю код всей ФОРМЫ ввода для "Form element" в константу
 const formAddElement = document.querySelector('.form_add-element');
 
+//помещаю код всей ФОРМЫ для "Edit avatar" в константу
+const formEditAvatar = document.querySelector('.form_edit-avatar');
 
 
 //помещаю код всей ФОРМЫ ввода для "Delete element" в константу
@@ -60,21 +63,7 @@ const config = {
 //помещаю в переменнную селектор template'a разметки карточки 
 const templateSelector = ".template";
 
-//запрашиваю с сервера информацию о пользователе - свойства name, about, avatar
-fetch('https://nomoreparties.co/v1/cohort-34/users/me', {
-    headers: {
-        authorization: 'f6c561df-ef33-43f7-885e-c25f80e98ae8'
-    }
-})
-    .then(res => res.json())
-    //вставляю информацию из полученного объекта в разметку
-    .then((result) => {
-        // console.log(result)
-        document.querySelector('.info__name').textContent = result.name;
-        document.querySelector('.info__engagement').textContent = result.about;
-        document.querySelector('.avatar__photo').setAttribute("src", result.avatar)
-    }
-    )
+
 
 // задаю массив с начальным содержанием карточек
 // const initialCards = [
@@ -104,6 +93,29 @@ fetch('https://nomoreparties.co/v1/cohort-34/users/me', {
 //     }
 // ];
 
+//задаю функции очистки полей по закрытии ПОПАПА
+function eraseInputText() {
+    inputFields.forEach((item) => {
+        item.value = '';
+    })
+}
+
+//запрашиваю с сервера информацию о пользователе - свойства name, about, avatar
+fetch('https://nomoreparties.co/v1/cohort-34/users/me', {
+    headers: {
+        authorization: 'f6c561df-ef33-43f7-885e-c25f80e98ae8'
+    }
+})
+    .then(res => res.json())
+    //вставляю информацию из полученного объекта в разметку
+    .then((result) => {
+        // console.log(result)
+        document.querySelector('.info__name').textContent = result.name;
+        document.querySelector('.info__engagement').textContent = result.about;
+        document.querySelector('.avatar__photo').setAttribute("src", result.avatar)
+    }
+    )
+
 //помещаю в переменную разметку аватара
 const avatar = document.querySelector('.avatar');
 //помещаю в переменную попап аватара
@@ -120,24 +132,38 @@ avatar.addEventListener('mouseover', openAvatarPopup);
 //добавляю слушатель события для исчезновения попапа аватара (для редактирования аватара)
 avatar.addEventListener('mouseout', closeAvatarPopup);
 
-// //создаю обработчик формы редактирования аватара
-// const editAvatarPopupForm = new PopupWithForm('.popup_edit-avatar', (evt) => {
-//     // Эта строчка отменяет стандартную отправку формы.
-//     evt.preventDefault();
-
-//     editAvatarPopupForm.getInputValues()[0];
-
-// })
-
-// //программирую нажатие на аватар
-// avatar.addEventListener('click',)
-
-//задаю функции очистки полей по закрытии ПОПАПА
-function eraseInputText() {
-    inputFields.forEach((item) => {
-        item.value = '';
+//создаю обработчик формы редактирования аватара
+const editAvatarPopupForm = new PopupWithForm('.popup_edit-avatar', (evt) => {
+    // Эта строчка отменяет стандартную отправку формы.
+    evt.preventDefault();
+    //вставляю в разметку новый путь к фото аватара
+    document.querySelector('.avatar__photo').setAttribute("src", editAvatarPopupForm.getInputValues()[0]);
+    //отправляю новую фото аватара на сервер
+    fetch('https://nomoreparties.co/v1/cohort-34/users/me/avatar', {
+        method: "PATCH",
+        headers: {
+            authorization: 'f6c561df-ef33-43f7-885e-c25f80e98ae8',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            avatar: editAvatarPopupForm.getInputValues()[0]
+        })
     })
-}
+    editAvatarPopupForm.close()
+})
+//прикрепляю обработчик к форме
+editAvatarPopupForm.setEventListeners();
+
+//программирую нажатие на аватар
+avatar.addEventListener('click', () => {
+    // очищаю поля ввода от индикации ошибок
+    popupEditAvatarValidation.resetValidation();
+    //обнуляю поля формы Add button (+) для следующего ввода
+    eraseInputText();
+    editAvatarPopup.open();
+})
+
+
 //создаю обработчик формы edit info
 // создаю экземпляр класса PopupWithForm для попапа edit info
 const editInfoPopupForm = new PopupWithForm('.popup_edit-info', (evt) => {
@@ -241,7 +267,7 @@ const popupAddElementValidator = new FormValidator(config, formAddElement, input
 
 popupAddElementValidator.enableValidation();
 
-// const popupDeleteElementValidator = new FormValidator(config, formDeleteElement, inputFields, errorTexts, saveButtons);
+const popupEditAvatarValidation = new FormValidator(config, formEditAvatar, inputFields, errorTexts, saveButtons);
 
-// popupDeleteElementValidator.enableValidation();
+popupEditAvatarValidation.enableValidation();
 
