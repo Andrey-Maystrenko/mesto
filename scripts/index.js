@@ -1,7 +1,6 @@
 import { Card } from './Card.js';
 import { FormValidator } from './FormValidator.js';
 import { Section } from './Section.js';
-import { Popup } from './Popup.js';
 import { PopupWithForm } from './PopupWithForm.js';
 import { UserInfo } from './UserInfo.js';
 import '../pages/index.css';
@@ -14,9 +13,6 @@ const popupWithImage = new PopupWithImage(
 
 popupWithImage.setEventListeners();
 
-const editInfoPopup = new Popup('.popup_edit-info');
-const addElementPopup = new Popup('.popup_add-element');
-const editAvatarPopup = new Popup('.popup_edit-avatar');
 const userInfo = new UserInfo({
     userNameSelector: '.info__name',
     userInfoSelector: '.info__engagement'
@@ -149,7 +145,9 @@ const editAvatarPopupForm = new PopupWithForm('.popup_edit-avatar', (evt) => {
             avatar: editAvatarPopupForm.getInputValues()[0]
         })
     })
-    editAvatarPopupForm.close()
+    document.querySelector('.popup__save-button-text').textContent = 'Сохранение...';
+    editAvatarPopupForm.close();
+    document.querySelector('.popup__save-button-text').textContent = 'Сохранить'
 })
 //прикрепляю обработчик к форме
 editAvatarPopupForm.setEventListeners();
@@ -160,7 +158,7 @@ avatar.addEventListener('click', () => {
     popupEditAvatarValidation.resetValidation();
     //обнуляю поля формы Add button (+) для следующего ввода
     eraseInputText();
-    editAvatarPopup.open();
+    editAvatarPopupForm.open();
 })
 
 
@@ -193,12 +191,17 @@ const addElementPopupForm = new PopupWithForm('.popup_add-element', (evt) => {
     };
     //клонирую ДомНоду карточки
     const newCard = new Card(item, templateSelector, popupWithImage.handleCardClick);
+    console.log(newCard)
     //вставляю контент из инпута в карточку
-    const renderedNewCard = newCard.renderCard();
-    //вставляю в разметку добавленной карточки кнопку trash для удаления карточки
-    renderedNewCard.insertAdjacentHTML('beforeend', '<button class="element__trash" type="button"></button>');
-    //навешиваю на кнопку trash слушатель для обработки удаления созданной отдельной карточки
-    renderedNewCard.querySelector('.element__trash').addEventListener('click', newCard._deleteCard);
+    const renderedNewCard = newCard.renderNewCard();
+
+    // //вставляю в разметку добавленной карточки кнопку trash для удаления карточки
+    // renderedNewCard.insertAdjacentHTML('beforeend', '<button class="element__trash" type="button"></button>');
+    // //навешиваю на кнопку trash слушатель для обработки удаления созданной отдельной карточки
+    // renderedNewCard.querySelector('.element__trash').addEventListener('click', newCard._deleteCard);
+
+    newCard.makeCardRemovable();
+
     //вставляю разметку добавленной карточкои в elements через создание экземляра класса Section
     const section = new Section({
         // задаю значения параметров конструктора класса Section
@@ -224,7 +227,7 @@ editButton.addEventListener('click', function pressEditBatton() {
     //очищаю поля ввода от индикации ошибок
     popupEditInfoValidator.resetValidation();
     //открываю попап для кнопки "Редактировать"
-    editInfoPopup.open();
+    editInfoPopupForm.open();
 });
 // программирую нажатие кнопки "Добавить" (+) (addButton)
 addButton.addEventListener('click', function pressAddButton() {
@@ -233,7 +236,7 @@ addButton.addEventListener('click', function pressAddButton() {
     //обнуляю поля формы Add button (+) для следующего ввода
     eraseInputText();
     // openPopup(popupAddElement);
-    addElementPopup.open();
+    addElementPopupForm.open();
 });
 
 // получаю массив с начальными карточками
