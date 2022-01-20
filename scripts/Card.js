@@ -6,8 +6,6 @@ export class Card {
         this.templateSelector = templateSelector;
         this.handleCardClick = handleCardClick;
     }
-
-
     _createCardDomNode() {
         this._cardTemplate = document
             .querySelector(this.templateSelector)
@@ -15,10 +13,9 @@ export class Card {
             .querySelector('.element')
             .cloneNode(true);
     }
-
     makeCardRemovable() {
         //вставляю в разметку добавленной карточки кнопку trash для удаления карточки
-        this._cardTemplate.insertAdjacentHTML('beforeend', '<button class="element__trash" type="button" id="myCard"></button>');
+        this._cardTemplate.insertAdjacentHTML('beforeend', '<button class="element__trash" type="button"></button>');
         //навешиваю на кнопку trash слушатель для обработки удаления созданной отдельной карточки
         this._cardTemplate.querySelector('.element__trash').addEventListener('click', this._deleteCard);
     }
@@ -54,7 +51,6 @@ export class Card {
 
         console.log(this.card)
         return this._cardTemplate;
-
     }
     renderNewCard() {
         // this.renderCard()
@@ -144,10 +140,7 @@ export class Card {
                     this._cardTemplate.querySelector('.element__like-amount').textContent = result.likes.length;
                 })
         }
-
-
     }
-
     _addEventListeners() {
         // this._cardTemplate.querySelector('.element__trash').addEventListener('click', this._deleteCard);
         this._cardTemplate.querySelector('.element__like').addEventListener('click', this._likeCard);
