@@ -86,7 +86,22 @@ api.getUserInfo()
     .then((result) => {
         document.querySelector('.info__name').textContent = result.name;
         document.querySelector('.info__engagement').textContent = result.about;
-        document.querySelector('.avatar__photo').setAttribute("src", result.avatar)
+        document.querySelector('.avatar__photo').setAttribute("src", result.avatar);
+        // получаю с сервера массив с дданными начальных карточек для их рендеринга
+        api.getInitialCards()
+            .then(initialCards => {
+                // отрисовываю массив с начальными карточками через создание экзепляра класса Section
+                const section = new Section({
+                    // задаю значения параметров конструктора класса Section
+                    items: initialCards,
+                    renderer: (item) => {
+                        const newCard = new Card(item, templateSelector, popupWithImage.handleCardClick, result.name);
+                        return newCard.renderExistedCard();
+                    }
+                },
+                    '.elements');
+                section.renderSection();
+            })
     }
     )
 //задаю функцию наложения оверлея попапа аватара при наведении мыши
@@ -106,19 +121,27 @@ avatar.addEventListener('mouseout', closeAvatarPopup);
 const editAvatarPopupForm = new PopupWithForm('.popup_edit-avatar', (evt) => {
     // Эта строчка отменяет стандартную отправку формы.
     evt.preventDefault();
-    //вставляю в разметку новый путь к фото аватара
-    document.querySelector('.avatar__photo').setAttribute("src", editAvatarPopupForm.getInputValues()[0]);
-
-    document.querySelector('.popup__save-button-text').textContent = 'Сохранение...';
+    //перед запросом на сервер меняю текст кнопки попапа
+    document.querySelector('.popup_edit-avatar .popup__save-button-text').textContent = 'Сохранение...';
 
     //отправляю новую фото аватара на сервер
     api.patchAvatar(
         JSON.stringify({
             avatar: editAvatarPopupForm.getInputValues()[0]
         }))
+        //в случае успеха отрабатывает обработчик формы
+        .then(() => {
+            //вставляю в разметку новый путь к фото аватара
+            document.querySelector('.avatar__photo').setAttribute("src", editAvatarPopupForm.getInputValues()[0]);
+            //возвращаю старое название кнопке Сохранить
+            document.querySelector('.popup_edit-avatar .popup__save-button-text').textContent = 'Сохранить';
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    //закрываю попап методом экзкмпляра класса PopupWithForm
     editAvatarPopupForm.close();
 
-    document.querySelector('.popup__save-button-text').textContent = 'Сохранить'
 })
 //прикрепляю обработчик к форме
 editAvatarPopupForm.setEventListeners();
@@ -141,7 +164,23 @@ const editInfoPopupForm = new PopupWithForm('.popup_edit-info', (evt) => {
         editInfoPopupForm.getInputValues()[0],
         editInfoPopupForm.getInputValues()[1]
     );
-    //открываю попап методом класса PopupWithForm
+
+    //перед запросом на сервер меняю текст кнопки попапа
+    document.querySelector('.popup_edit-info .popup__save-button-text').textContent = 'Сохранение...';
+
+    api.patchUserInfo(JSON.stringify({
+        name: editInfoPopupForm.getInputValues()[0],
+        about: editInfoPopupForm.getInputValues()[1]
+    }))
+        .then(() => {
+            //возвращаю старое название кнопке Сохранить
+            document.querySelector('.popup_edit-info .popup__save-button-text').textContent = 'Сохранить';
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+
+    //закрываю попап методом класса PopupWithForm
     editInfoPopupForm.close();
 })
 // Прикрепляею обработчик к форме в созданном экземпляре попапа
@@ -200,21 +239,7 @@ addButton.addEventListener('click', function pressAddButton() {
     addElementPopupForm.open();
 });
 
-// получаю с сервера массив с дданными начальных карточек для их рендеринга
-api.getInitialCards()
-    .then(initialCards => {
-        // отрисовываю массив с начальными карточками через создание экзепляра класса Section
-        const section = new Section({
-            // задаю значения параметров конструктора класса Section
-            items: initialCards,
-            renderer: (item) => {
-                const newCard = new Card(item, templateSelector, popupWithImage.handleCardClick);
-                return newCard.renderCard();
-            }
-        },
-            '.elements');
-        section.renderSection();
-    })
+
 // задаю правила валидации через создание экзепляров класса FormValidate для каждого попапа с формой ввода
 const popupEditInfoValidator = new FormValidator(config, formEditInfo, inputFields, errorTexts, saveButtons);
 
