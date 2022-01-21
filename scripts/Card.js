@@ -52,7 +52,7 @@ export class Card {
         api.getUserInfo()
             //вставляю информацию из полученного объекта в разметку
             .then((result) => {
-                if (this.card.owner.name === result.name) {
+                if (this.card.owner._id === result._id) {
                     //делаю карточку удаляемой (с иконкой trash и присущими ей функциями)
                     this.makeCardRemovable();
                 }
@@ -65,7 +65,6 @@ export class Card {
 
     renderNewCard() {
         this._renderCard();
-        console.log(`объект после создания карточки`, this.card)
         //соханяю добавленную картинку на сервере
         api.postNewCard(
             JSON.stringify({
@@ -76,7 +75,6 @@ export class Card {
         )
             .then(result => {
                 this.card = result;
-                console.log(`возврат объект после POST`, this.card)
             })
             .catch((err) => {
                 console.log(err); // выведем ошибку в консоль
