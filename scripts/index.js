@@ -102,8 +102,7 @@ api.getUserInfo()
                     '.elements');
                 section.renderSection();
             })
-    }
-    )
+    })
 //задаю функцию наложения оверлея попапа аватара при наведении мыши
 function openAvatarPopup() {
     avatarOverlay.classList.add('popup_opened')
@@ -123,7 +122,6 @@ const editAvatarPopupForm = new PopupWithForm('.popup_edit-avatar', (evt) => {
     evt.preventDefault();
     //перед запросом на сервер меняю текст кнопки попапа
     document.querySelector('.popup_edit-avatar .popup__save-button-text').textContent = 'Сохранение...';
-
     //отправляю новую фото аватара на сервер
     api.patchAvatar(
         JSON.stringify({
@@ -131,17 +129,16 @@ const editAvatarPopupForm = new PopupWithForm('.popup_edit-avatar', (evt) => {
         }))
         //в случае успеха отрабатывает обработчик формы
         .then(() => {
-            //вставляю в разметку новый путь к фото аватара
-            document.querySelector('.avatar__photo').setAttribute("src", editAvatarPopupForm.getInputValues()[0]);
             //возвращаю старое название кнопке Сохранить
             document.querySelector('.popup_edit-avatar .popup__save-button-text').textContent = 'Сохранить';
         })
         .catch((err) => {
             console.log(err);
         });
+    //вставляю в разметку новый путь к фото аватара
+    document.querySelector('.avatar__photo').setAttribute("src", editAvatarPopupForm.getInputValues()[0]);
     //закрываю попап методом экзкмпляра класса PopupWithForm
     editAvatarPopupForm.close();
-
 })
 //прикрепляю обработчик к форме
 editAvatarPopupForm.setEventListeners();
@@ -159,15 +156,14 @@ avatar.addEventListener('click', () => {
 const editInfoPopupForm = new PopupWithForm('.popup_edit-info', (evt) => {
     // Эта строчка отменяет стандартную отправку формы.
     evt.preventDefault();
-
+    //задаю данные о пользователе методом экземпляра класса UserInfo
     userInfo.setUserInfo(
         editInfoPopupForm.getInputValues()[0],
         editInfoPopupForm.getInputValues()[1]
     );
-
     //перед запросом на сервер меняю текст кнопки попапа
     document.querySelector('.popup_edit-info .popup__save-button-text').textContent = 'Сохранение...';
-
+    //заменяю данные о пользователе на сервере
     api.patchUserInfo(JSON.stringify({
         name: editInfoPopupForm.getInputValues()[0],
         about: editInfoPopupForm.getInputValues()[1]
@@ -179,7 +175,6 @@ const editInfoPopupForm = new PopupWithForm('.popup_edit-info', (evt) => {
         .catch((err) => {
             console.log(err);
         });
-
     //закрываю попап методом класса PopupWithForm
     editInfoPopupForm.close();
 })

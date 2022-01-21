@@ -39,9 +39,8 @@ export class Card {
         this._cardTemplate.querySelector('.element__name').textContent = this.card.name;
         //вставляю количество лайков в разметку
         this._cardTemplate.querySelector('.element__like-amount').textContent = this.card.likes.length;
-        // console.log(`object`, this.card.likes.some((like) => like.name === this.myName))
+        //определяю, есть ли мое имя в массиве лайков и отрисовываю активный лайк, если да
         if (this.card.likes.some((like) => like.name === this.myName)) {
-
             this._cardTemplate.querySelector('.element__like').classList.add('element__like_active');
         }
         this._addEventListeners();
@@ -50,24 +49,17 @@ export class Card {
     renderExistedCard() {
         this._renderCard();
         //запрашиваю с сервера данные usera для получения его name для определения "своей карточки"
-        // api.getUserInfo()
-        //     //вставляю информацию из полученного объекта в разметку
-        //     .then((result) => {
-        //         if (this.card.owner.name === result.name) {
-        //             //деалю карточку удаляемой (с иконкой trash и присущими ей функциями)
-        //             this.makeCardRemovable();
-        //         }
-        //         console.log(`массив`, this.card.likes)
-        //         console.log(`искомый элемент массива`, { name: result.name, about: result.about, avatar: result.avatar })
-        //         if (this.card.likes.some({ name: result.name, about: result.about, avatar: result.avatar })) {
-        //             document.querySelector('.element__like').classList.add('.element__like_active')
-        //         }
-        //     }
-        //     )
-        //     .catch((err) => {
-        //         console.log(err); // выведем ошибку в консоль
-        //     });
-        // console.log(this.card)
+        api.getUserInfo()
+            //вставляю информацию из полученного объекта в разметку
+            .then((result) => {
+                if (this.card.owner.name === result.name) {
+                    //делаю карточку удаляемой (с иконкой trash и присущими ей функциями)
+                    this.makeCardRemovable();
+                }
+            })
+            .catch((err) => {
+                console.log(err); // выведем ошибку в консоль
+            });
         return this._cardTemplate;
     }
 
@@ -118,7 +110,6 @@ export class Card {
                 }), this.card._id
             )
                 .then((result) => {
-                    console.log(`объект this.card после добавления лайка`, result);
                     //вставляю новое количество лайков в разметку
                     this._cardTemplate.querySelector('.element__like-amount').textContent = result.likes.length;
                 })
@@ -135,7 +126,6 @@ export class Card {
                 }), this.card._id
             )
                 .then(result => {
-                    console.log(`объект this.card после снятия лайка`, result);
                     //вставляю новое количество лайков в разметку
                     this._cardTemplate.querySelector('.element__like-amount').textContent = result.likes.length;
                 })

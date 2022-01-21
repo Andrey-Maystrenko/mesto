@@ -13,6 +13,8 @@ export class Api {
                 if (res.ok) {
                     return res.json()
                 }
+                // если ошибка, отклоняем промис
+                return Promise.reject(`Ошибка: ${res.status}`);
             })
     }
 
@@ -26,6 +28,8 @@ export class Api {
                 if (res.ok) {
                     return res.json()
                 }
+                // если ошибка, отклоняем промис
+                return Promise.reject(`Ошибка: ${res.status}`);
             });
     }
 
@@ -38,20 +42,15 @@ export class Api {
             },
             body: body
         })
-
             .then(res => {
                 if (res.ok) {
+                    console.log(res.json);
+
                     return res.json()
                 }
+                // если ошибка, отклоняем промис
+                return Promise.reject(`Ошибка: ${res.status}`);
             });
-
-        // .then(res => {
-        //     if (res.ok) {
-        //         return res.json();
-        //     }
-        //     // если ошибка, отклоняем промис
-        //     return Promise.reject(`Ошибка: ${res.status}`);
-        // });
     };
 
     patchUserInfo(body) {
@@ -67,6 +66,8 @@ export class Api {
                 if (res.ok) {
                     return res.json()
                 }
+                // если ошибка, отклоняем промис
+                return Promise.reject(`Ошибка: ${res.status}`);
             });
     }
 
@@ -83,6 +84,8 @@ export class Api {
                 if (res.ok) {
                     return res.json()
                 }
+                // если ошибка, отклоняем промис
+                return Promise.reject(`Ошибка: ${res.status}`);
             });
     }
     deleteCard(cardId) {
@@ -106,6 +109,8 @@ export class Api {
                 if (res.ok) {
                     return res.json();
                 }
+                // если ошибка, отклоняем промис
+                return Promise.reject(`Ошибка: ${res.status}`);
             })
     }
     deleteLike(body, cardId) {
@@ -121,6 +126,8 @@ export class Api {
                 if (res.ok) {
                     return res.json();
                 }
+                // если ошибка, отклоняем промис
+                return Promise.reject(`Ошибка: ${res.status}`);
             })
     }
 }
