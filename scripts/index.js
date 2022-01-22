@@ -1,11 +1,11 @@
-import { Card } from './Card.js';
-import { FormValidator } from './FormValidator.js';
-import { Section } from './Section.js';
-import { PopupWithForm } from './PopupWithForm.js';
-import { UserInfo } from './UserInfo.js';
+import { Card } from '../components/Card.js';
+import { FormValidator } from '../components/FormValidator.js';
+import { Section } from '../components/Section.js';
+import { PopupWithForm } from '../components/PopupWithForm.js';
+import { UserInfo } from '../components/UserInfo.js';
 import '../pages/index.css';
-import { PopupWithImage } from './PopupWithImage.js';
-import { Api } from './Api.js';
+import { PopupWithImage } from '../components/PopupWithImage.js';
+import { Api } from '../components/Api.js';
 
 const popupWithImage = new PopupWithImage(
     document.querySelector('.popup__mask-group-full-size'),
@@ -111,10 +111,10 @@ function openAvatarPopup() {
 function closeAvatarPopup() {
     avatarOverlay.classList.remove('popup_opened')
 }
-//добавляю слушатель события для отображения попапа аватара (для редактирования аватара)
-avatar.addEventListener('mouseover', openAvatarPopup);
-//добавляю слушатель события для исчезновения попапа аватара (для редактирования аватара)
-avatar.addEventListener('mouseout', closeAvatarPopup);
+// //добавляю слушатель события для отображения попапа аватара (для редактирования аватара)
+// avatar.addEventListener('mouseover', openAvatarPopup);
+// //добавляю слушатель события для исчезновения попапа аватара (для редактирования аватара)
+// avatar.addEventListener('mouseout', closeAvatarPopup);
 
 //создаю обработчик формы редактирования аватара
 const editAvatarPopupForm = new PopupWithForm('.popup_edit-avatar', (evt) => {
