@@ -111,10 +111,10 @@ function openAvatarPopup() {
 function closeAvatarPopup() {
     avatarOverlay.classList.remove('popup_opened')
 }
-// //добавляю слушатель события для отображения попапа аватара (для редактирования аватара)
-// avatar.addEventListener('mouseover', openAvatarPopup);
-// //добавляю слушатель события для исчезновения попапа аватара (для редактирования аватара)
-// avatar.addEventListener('mouseout', closeAvatarPopup);
+//добавляю слушатель события для отображения попапа аватара (для редактирования аватара)
+avatar.addEventListener('mouseover', openAvatarPopup);
+//добавляю слушатель события для исчезновения попапа аватара (для редактирования аватара)
+avatar.addEventListener('mouseout', closeAvatarPopup);
 
 //создаю обработчик формы редактирования аватара
 const editAvatarPopupForm = new PopupWithForm('.popup_edit-avatar', (evt) => {
@@ -275,4 +275,3 @@ popupEditAvatarValidation.enableValidation();
 //         link: require('../images/adler.jpg')
 //     }
 // ];
-

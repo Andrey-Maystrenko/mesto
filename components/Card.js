@@ -138,5 +138,3 @@ export class Card {
         this._cardTemplate.querySelector('.element__button-mask-group').addEventListener('click', this.handleCardClick);
     }
 }
-
-
