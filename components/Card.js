@@ -1,18 +1,26 @@
 import { PopupWithForm } from "./PopupWithForm.js";
-import { Api } from "./Api.js";
-const api = new Api({
-    baseUrl: 'https://mesto.nomoreparties.co/v1/cohort-34',
-    headers: {
-        authorization: 'f6c561df-ef33-43f7-885e-c25f80e98ae8',
-        'Content-Type': 'application/json'
-    }
-})
+
 export class Card {
-    constructor(card, templateSelector, handleCardClick, myName) {
+    constructor(
+        card,
+        templateSelector,
+        handleCardClick,
+        apiGetUserInfo,
+        apiPostNewCard,
+        myName,
+        apiDeleteCard,
+        apiPutLike,
+        apiDeleteLike
+    ) {
         this.card = card;
         this.templateSelector = templateSelector;
         this.handleCardClick = handleCardClick;
+        this.apiGetUserInfo = apiGetUserInfo;
+        this.apiPostNewCard = apiPostNewCard;
         this.myName = myName;
+        this.apiDeleteCard = apiDeleteCard;
+        this.apiPutLike = apiPutLike;
+        this.apiDeleteLike = apiDeleteLike
     }
 
     _createCardDomNode() {
@@ -39,8 +47,9 @@ export class Card {
         this._cardTemplate.querySelector('.element__name').textContent = this.card.name;
         //вставляю количество лайков в разметку
         this._cardTemplate.querySelector('.element__like-amount').textContent = this.card.likes.length;
-        //определяю, есть ли мое имя в массиве лайков и отрисовываю активный лайк, если да
+        //определяю, есть ли мое имя в массиве лайков и, если да
         if (this.card.likes.some((like) => like.name === this.myName)) {
+            //делаю лайк активным
             this._cardTemplate.querySelector('.element__like').classList.add('element__like_active');
         }
         this._addEventListeners();
@@ -49,7 +58,7 @@ export class Card {
     renderExistedCard() {
         this._renderCard();
         //запрашиваю с сервера данные usera для получения его name для определения "своей карточки"
-        api.getUserInfo()
+        this.apiGetUserInfo
             //вставляю информацию из полученного объекта в разметку
             .then((result) => {
                 if (this.card.owner._id === result._id) {
@@ -66,11 +75,11 @@ export class Card {
     renderNewCard() {
         this._renderCard();
         //соханяю добавленную картинку на сервере
-        api.postNewCard(
+        this.apiPostNewCard(
             JSON.stringify({
                 name: this.card.name,
                 link: this.card.link,
-                likes: [],
+                likes: []
             })
         )
             .then(result => {
@@ -89,7 +98,7 @@ export class Card {
             evt.preventDefault();
             //удаляю из разметки карточку
             this._cardTemplate.remove();
-            api.deleteCard(this.card._id);
+            this.apiDeleteCard(this.card._id);
             popupDelete.close();
         });
         popupDelete.open();
@@ -102,12 +111,13 @@ export class Card {
         //если лайк поставлен (лайк активный)
         if (_likeButton.classList.contains('element__like_active')) {
             //отправляю свое owner.name на сервер в массив likes
-            api.putLike(
+            this.apiPutLike(
                 JSON.stringify({
                     likes: this.card.owner.name
                 }), this.card._id
             )
                 .then((result) => {
+                    console.log('лайк отправлен на сервер, мое имя в массиве лайков', result);
                     //вставляю новое количество лайков в разметку
                     this._cardTemplate.querySelector('.element__like-amount').textContent = result.likes.length;
                 })
@@ -118,7 +128,7 @@ export class Card {
         //если лайк снят
         else {
             //удаляю свое owner.name из массива likes
-            api.deleteLike(
+            this.apiDeleteLike(
                 JSON.stringify({
                     likes: this.card.owner.name
                 }), this.card._id

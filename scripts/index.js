@@ -95,7 +95,16 @@ api.getUserInfo()
                     // задаю значения параметров конструктора класса Section
                     items: initialCards,
                     renderer: (item) => {
-                        const newCard = new Card(item, templateSelector, popupWithImage.handleCardClick, result.name);
+                        const newCard = new Card(
+                            item,
+                            templateSelector,
+                            popupWithImage.handleCardClick,
+                            api.getUserInfo(),
+                            api.postNewCard,
+                            result.name,
+                            api.deleteCard,
+                            api.putLike,
+                            api.deleteLike);
                         return newCard.renderExistedCard();
                     }
                 },
@@ -193,7 +202,16 @@ const addElementPopupForm = new PopupWithForm('.popup_add-element', (evt) => {
         likes: []
     };
     //клонирую ДомНоду карточки
-    const newCard = new Card(item, templateSelector, popupWithImage.handleCardClick);
+    const newCard = new Card(
+        item,
+        templateSelector,
+        popupWithImage.handleCardClick,
+        api.getUserInfo(),
+        api.postNewCard,
+        item.name,
+        api.deleteCard,
+        api.putLike,
+        api.deleteLike);
     //вставляю контент из инпута в карточку
     const renderedNewCard = newCard.renderNewCard();
     //добалвяю в разметку карточки кнопку ее удаления со всем функционалом

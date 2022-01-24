@@ -97,7 +97,7 @@ export class Api {
         })
     }
     putLike(body, cardId) {
-        return fetch(`https://mesto.nomoreparties.co/v1/cohort-34/cards/${cardId}/likes `, {
+        return fetch(`https://mesto.nomoreparties.co/v1/cohort-34/cards/${cardId}/likes`, {
             method: 'PUT',
             headers: {
                 authorization: 'f6c561df-ef33-43f7-885e-c25f80e98ae8',
