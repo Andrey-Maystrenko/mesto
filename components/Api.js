@@ -12,7 +12,7 @@ export class Api {
         return Promise.reject(`Ошибка: ${res.status}`);
     }
 
-    getUserInfo() {
+    getUserInfo = () => {
         return fetch('https://nomoreparties.co/v1/cohort-34/users/me', {
             headers: {
                 authorization: 'f6c561df-ef33-43f7-885e-c25f80e98ae8',
@@ -21,7 +21,7 @@ export class Api {
             .then((res) => this._checkResponse(res))
     }
 
-    getInitialCards() {
+    getInitialCards = () => {
         return fetch('https://mesto.nomoreparties.co/v1/cohort-34/cards', {
             headers: {
                 authorization: 'f6c561df-ef33-43f7-885e-c25f80e98ae8'
@@ -30,7 +30,7 @@ export class Api {
             .then((res) => this._checkResponse(res))
     }
 
-    patchAvatar(body) {
+    patchAvatar = (body) => {
         return fetch('https://nomoreparties.co/v1/cohort-34/users/me/avatar', {
             method: "PATCH",
             headers: {
@@ -42,7 +42,7 @@ export class Api {
             .then((res) => this._checkResponse(res))
     };
 
-    patchUserInfo(body) {
+    patchUserInfo = (body) => {
         return fetch('https://mesto.nomoreparties.co/v1/cohort-34/users/me', {
             method: 'PATCH',
             headers: {
@@ -54,7 +54,7 @@ export class Api {
             .then((res) => this._checkResponse(res))
     }
 
-    postNewCard(body) {
+    postNewCard = (body) => {
         return fetch('https://mesto.nomoreparties.co/v1/cohort-34/cards', {
             method: 'POST',
             headers: {
@@ -72,7 +72,7 @@ export class Api {
         //     return Promise.reject(`Ошибка: ${res.status}`);
         // })
     }
-    deleteCard(cardId) {
+    deleteCard = (cardId) => {
         return fetch(`https://mesto.nomoreparties.co/v1/cohort-34/cards/${cardId}`, {
             method: 'DELETE',
             headers: {
@@ -88,7 +88,7 @@ export class Api {
         //     return Promise.reject(`Ошибка: ${res.status}`);
         // })
     }
-    putLike(body, cardId) {
+    putLike = (body, cardId) => {
         return fetch(`https://mesto.nomoreparties.co/v1/cohort-34/cards/${cardId}/likes`, {
             method: 'PUT',
             headers: {
@@ -106,7 +106,7 @@ export class Api {
         //     return Promise.reject(`Ошибка: ${res.status}`);
         // })
     }
-    deleteLike(body, cardId) {
+    deleteLike = (body, cardId) => {
         return fetch(`https://mesto.nomoreparties.co/v1/cohort-34/cards/${cardId}/likes `, {
             method: 'DELETE',
             headers: {

@@ -6,6 +6,7 @@ import { UserInfo } from '../components/UserInfo.js';
 import '../pages/index.css';
 import { PopupWithImage } from '../components/PopupWithImage.js';
 import { Api } from '../components/Api.js';
+import { renderLoading } from '../utils/utils.js';
 
 const popupWithImage = new PopupWithImage(
     document.querySelector('.popup__mask-group-full-size'),
@@ -70,22 +71,12 @@ const templateSelector = ".template";
 //помещаю в переменную разметку аватара
 const avatar = document.querySelector('.avatar');
 
-//помещаю в переменную попап аватара
-const avatarOverlay = document.querySelector('.avatar__overlay');
-
-//задаю функции очистки полей по закрытии ПОПАПА
-function eraseInputText() {
-    inputFields.forEach((item) => {
-        item.value = '';
-    })
-}
 //отрисовываю начальные данные о пользователе - свойства name, about, avatar
 //запрашиваю с сервера информацию о пользователе - свойства name, about, avatar
 api.getUserInfo()
     //вставляю информацию из полученного объекта в разметку
     .then((result) => {
-        document.querySelector('.info__name').textContent = result.name;
-        document.querySelector('.info__engagement').textContent = result.about;
+        userInfo.setUserInfo(result.name, result.about);
         document.querySelector('.avatar__photo').setAttribute("src", result.avatar);
         // получаю с сервера массив с дданными начальных карточек для их рендеринга
         api.getInitialCards()
@@ -112,25 +103,12 @@ api.getUserInfo()
                 section.renderSection();
             })
     })
-//задаю функцию наложения оверлея попапа аватара при наведении мыши
-function openAvatarPopup() {
-    avatarOverlay.classList.add('popup_opened')
-}
-//задаю функцию снятия оверлея попапа аватара при убирании с него мыши
-function closeAvatarPopup() {
-    avatarOverlay.classList.remove('popup_opened')
-}
-//добавляю слушатель события для отображения попапа аватара (для редактирования аватара)
-avatar.addEventListener('mouseover', openAvatarPopup);
-//добавляю слушатель события для исчезновения попапа аватара (для редактирования аватара)
-avatar.addEventListener('mouseout', closeAvatarPopup);
 
 //создаю обработчик формы редактирования аватара
 const editAvatarPopupForm = new PopupWithForm('.popup_edit-avatar', (evt) => {
     // Эта строчка отменяет стандартную отправку формы.
     evt.preventDefault();
-    //перед запросом на сервер меняю текст кнопки попапа
-    document.querySelector('.popup_edit-avatar .popup__save-button-text').textContent = 'Сохранение...';
+    renderLoading(formEditAvatar, 'Сохранение...');
     //отправляю новую фото аватара на сервер
     api.patchAvatar(
         JSON.stringify({
@@ -139,15 +117,16 @@ const editAvatarPopupForm = new PopupWithForm('.popup_edit-avatar', (evt) => {
         //в случае успеха отрабатывает обработчик формы
         .then(() => {
             //возвращаю старое название кнопке Сохранить
-            document.querySelector('.popup_edit-avatar .popup__save-button-text').textContent = 'Сохранить';
+            renderLoading(formEditAvatar, 'Сохранить');
+            //закрываю попап методом экзкмпляра класса PopupWithForm
+            editAvatarPopupForm.close();
         })
         .catch((err) => {
             console.log(err);
         });
     //вставляю в разметку новый путь к фото аватара
     document.querySelector('.avatar__photo').setAttribute("src", editAvatarPopupForm.getInputValues()[0]);
-    //закрываю попап методом экзкмпляра класса PopupWithForm
-    editAvatarPopupForm.close();
+
 })
 //прикрепляю обработчик к форме
 editAvatarPopupForm.setEventListeners();
@@ -157,7 +136,7 @@ avatar.addEventListener('click', () => {
     // очищаю поля ввода от индикации ошибок
     popupEditAvatarValidation.resetValidation();
     //обнуляю поля формы Add button (+) для следующего ввода
-    eraseInputText();
+    popupEditAvatarValidation.eraseInputText();
     editAvatarPopupForm.open();
 })
 //создаю обработчик формы edit info
@@ -171,7 +150,7 @@ const editInfoPopupForm = new PopupWithForm('.popup_edit-info', (evt) => {
         editInfoPopupForm.getInputValues()[1]
     );
     //перед запросом на сервер меняю текст кнопки попапа
-    document.querySelector('.popup_edit-info .popup__save-button-text').textContent = 'Сохранение...';
+    renderLoading(formEditInfo, 'Сохранение...');
     //заменяю данные о пользователе на сервере
     api.patchUserInfo(JSON.stringify({
         name: editInfoPopupForm.getInputValues()[0],
@@ -179,13 +158,14 @@ const editInfoPopupForm = new PopupWithForm('.popup_edit-info', (evt) => {
     }))
         .then(() => {
             //возвращаю старое название кнопке Сохранить
-            document.querySelector('.popup_edit-info .popup__save-button-text').textContent = 'Сохранить';
+            renderLoading(formEditInfo, 'Сохранить');
+            //закрываю попап методом класса PopupWithForm
+            editInfoPopupForm.close();
         })
         .catch((err) => {
             console.log(err);
         });
-    //закрываю попап методом класса PopupWithForm
-    editInfoPopupForm.close();
+
 })
 // Прикрепляею обработчик к форме в созданном экземпляре попапа
 editInfoPopupForm.setEventListeners();
@@ -231,12 +211,14 @@ const addElementPopupForm = new PopupWithForm('.popup_add-element', (evt) => {
 addElementPopupForm.setEventListeners();
 
 //программирую нажатие кнопки "Редактировать" (editButton)
-editButton.addEventListener('click', function pressEditBatton() {
+editButton.addEventListener('click', function pressEditButton() {
     //получаю объект с данными пользователя
     const user = userInfo.getUserInfo();
     //помещаю полученные данные пользователя в разметку блока Info
-    // и поля формы при первом открытии 
     userInfo.setUserInfo(user.name, user.info);
+    // помещаю полученные данные пользователя в поля формы при первом открытии
+    document.querySelector('.form__input_info_name').value = user.name;
+    document.querySelector('.form__input_info_engagement').value = user.info;
     //очищаю поля ввода от индикации ошибок
     popupEditInfoValidator.resetValidation();
     //открываю попап для редактирования user Info
@@ -247,11 +229,10 @@ addButton.addEventListener('click', function pressAddButton() {
     // очищаю поля ввода от индикации ошибок
     popupAddElementValidator.resetValidation()
     //обнуляю поля формы Add button (+) для следующего ввода
-    eraseInputText();
+    popupAddElementValidator.eraseInputText();
     // openPopup(popupAddElement);
     addElementPopupForm.open();
 });
-
 
 // задаю правила валидации через создание экзепляров класса FormValidate для каждого попапа с формой ввода
 const popupEditInfoValidator = new FormValidator(config, formEditInfo, inputFields, errorTexts, saveButtons);
@@ -265,31 +246,3 @@ popupAddElementValidator.enableValidation();
 const popupEditAvatarValidation = new FormValidator(config, formEditAvatar, inputFields, errorTexts, saveButtons);
 
 popupEditAvatarValidation.enableValidation();
-
-// задаю массив с начальным содержанием карточек
-// const initialCards = [
-//     {
-//         name: 'Анапа',
-//         link: require('../images/anapa.jpg')
-//     },
-//     {
-//         name: 'Новороссийск',
-//         link: require('../images/novorossiysk.jpg')
-//     },
-//     {
-//         name: 'Геленджик',
-//         link: require('../images/gelendzhik.jpg')
-//     },
-//     {
-//         name: 'Лазаревское',
-//         link: require('../images/lazarevskoe.jpg')
-//     },
-//     {
-//         name: 'Сочи',
-//         link: require('../images/sochi.jpg')
-//     },
-//     {
-//         name: 'Адлер',
-//         link: require('../images/adler.jpg')
-//     }
-// ];

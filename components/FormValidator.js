@@ -37,6 +37,13 @@ export class FormValidator {
         this._deactivateSaveButton()
     }
 
+    //задаю функцию очистки полей по закрытии ПОПАПА
+    eraseInputText() {
+        this.inputFields.forEach((item) => {
+            item.value = '';
+        })
+    }
+
     _hideInputError = (inputField) => {
         // Находим <input>, в котором отображается ошибка, и соответствующий элемент <span>.
         const errorName = inputField.getAttribute('name');
