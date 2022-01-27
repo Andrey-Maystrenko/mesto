@@ -70,6 +70,42 @@ const templateSelector = ".template";
 //помещаю в переменную разметку аватара
 const avatar = document.querySelector('.avatar');
 
+//задаю функцию создания экземпляра класса карточки вместе с обработчиком ее удаления
+function createCardExample(data, result) {
+    const newCard = new Card(
+        data,
+        templateSelector,
+        popupWithImage.handleCardClick,
+        api.getUserInfo(),
+        api.postNewCard,
+        result.name,
+        api.putLike,
+        api.deleteLike,
+        onDeleteClick);
+    //создаю обработчик нажатия на корзину удаления карточки
+    function onDeleteClick(id, cardMarkup) {
+        //создаю обработчик submit'a попапа удаления карточки
+        const deleteCardPopupForm = new PopupWithForm('.popup_delete', (evt) => {
+            // Эта строчка отменяет стандартную отправку формы.
+            evt.preventDefault();
+            // удаляю объект карточки с сервера и разметку карточки из разметки страницы
+            api.deleteCard(id)
+                .then(() => {
+                    cardMarkup.remove();
+                    deleteCardPopupForm.close();
+                })
+                .catch((err) => {
+                    console.log(err); // выведем ошибку в консоль
+                })
+        });
+        //прикрепляю обработчик к форме удаления попапа
+        deleteCardPopupForm.setEventListeners();
+        //открываю попап удаления карточки
+        deleteCardPopupForm.open();
+    };
+    return newCard;
+}
+
 //отрисовываю начальные данные о пользователе - свойства name, about, avatar
 //запрашиваю с сервера информацию о пользователе - свойства name, about, avatar
 api.getUserInfo()
@@ -85,41 +121,18 @@ api.getUserInfo()
                     // задаю значения параметров конструктора класса Section
                     items: initialCards,
                     renderer: (item) => {
-                        const newCard = new Card(
-                            item,
-                            templateSelector,
-                            popupWithImage.handleCardClick,
-                            api.getUserInfo(),
-                            api.postNewCard,
-                            result.name,
-                            api.deleteCard,
-                            api.putLike,
-                            api.deleteLike,
-                            onDeleteClick);
-
-                        //создаю обработчик нажатия на корзину удаления карточки
-                        function onDeleteClick(id, cardMarkup) {
-                            //создаю обработчик submit'a попапа удаления карточки
-                            const deleteCardPopupForm = new PopupWithForm('.popup_delete', (evt) => {
-                                // Эта строчка отменяет стандартную отправку формы.
-                                evt.preventDefault();
-                                // удаляю объект карточки с сервера и разметку карточки из разметки страницы
-                                api.deleteCard(id);
-                                cardMarkup.remove();
-                                deleteCardPopupForm.close();
-                            });
-                            //прикрепляю обработчик к форме удаления попапа
-                            deleteCardPopupForm.setEventListeners();
-                            //открываю попап удаления карточки
-                            deleteCardPopupForm.open();
-                            //программирую нажатие на корзину trash
-                            //оно уже запрограммировано в Card.makeCardRemovable
-                        };
+                        //создаю экземпляр класса Card вместе с обработчиком удаления карточки
+                        const newCard = createCardExample(item, result);
+                        //отрисовываю карточку (создаю ДомНоду)
                         return newCard.renderExistedCard();
                     }
                 },
                     '.elements');
+                //вставляю карточки в разметку
                 section.renderSection();
+            })
+            .catch((err) => {
+                console.log(err); // выведем ошибку в консоль
             })
     })
 
@@ -216,43 +229,13 @@ const addElementPopupForm = new PopupWithForm('.popup_add-element', (evt) => {
         link: addElementPopupForm.getInputValues()[1],
         likes: []
     };
-    //клонирую ДомНоду карточки
-    const newCard = new Card(
-        item,
-        templateSelector,
-        popupWithImage.handleCardClick,
-        api.getUserInfo(),
-        api.postNewCard,
-        item.name,
-        api.deleteCard,
-        api.putLike,
-        api.deleteLike,
-        onDeleteClick);
+    //создаю экземпляр класса Card вместе с обработчиком удаления карточки
+    const newCard = createCardExample(item, item);
     //вставляю контент из инпута в карточку
     const renderedNewCard = newCard.renderNewCard();
     //добалвяю в разметку карточки кнопку ее удаления и 
     //навешенный слушатель-обработчик удаления карточки
     newCard.makeCardRemovable();
-
-    //создаю обработчик удаления карточки
-    function onDeleteClick(id, cardMarkup) {
-        //создаю обработчик submit'a попапа удаления карточки
-        const deleteCardPopupForm = new PopupWithForm('.popup_delete', (evt) => {
-            // Эта строчка отменяет стандартную отправку формы.
-            evt.preventDefault();
-            // удаляю объект карточки с сервера и разметку карточки из разметки страницы
-            api.deleteCard(id);
-            cardMarkup.remove();
-            deleteCardPopupForm.close();
-        });
-        //прикрепляю обработчик к форме удаления попапа
-        deleteCardPopupForm.setEventListeners();
-        //открываю попап удаления карточки
-        deleteCardPopupForm.open();
-        //программирую нажатие на корзину trash
-        //оно уже запрограммировано в Card.makeCardRemovable
-    }
-
     //вставляю разметку добавленной карточкои в elements через создание экземляра класса Section
     const section = new Section({
         // задаю значения параметров конструктора класса Section
@@ -276,8 +259,6 @@ addButton.addEventListener('click', function pressAddButton() {
     // openPopup(popupAddElement);
     addElementPopupForm.open();
 });
-
-
 
 // задаю правила валидации через создание экзепляров класса FormValidate для каждого попапа с формой ввода
 const popupEditInfoValidator = new FormValidator(config, formEditInfo, inputFields, errorTexts, saveButtons);
