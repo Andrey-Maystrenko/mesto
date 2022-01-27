@@ -1,5 +1,3 @@
-import { PopupWithForm } from "./PopupWithForm.js";
-
 export class Card {
     constructor(
         card,
@@ -10,7 +8,8 @@ export class Card {
         myName,
         apiDeleteCard,
         apiPutLike,
-        apiDeleteLike
+        apiDeleteLike,
+        onDeleteClick
     ) {
         this.card = card;
         this.templateSelector = templateSelector;
@@ -20,7 +19,8 @@ export class Card {
         this.myName = myName;
         this.apiDeleteCard = apiDeleteCard;
         this.apiPutLike = apiPutLike;
-        this.apiDeleteLike = apiDeleteLike
+        this.apiDeleteLike = apiDeleteLike;
+        this.onDeleteClick = onDeleteClick
     }
 
     _createCardDomNode() {
@@ -34,8 +34,12 @@ export class Card {
     makeCardRemovable() {
         //вставляю в разметку добавленной карточки кнопку trash для удаления карточки
         this._cardTemplate.insertAdjacentHTML('beforeend', '<button class="element__trash" type="button"></button>');
-        //навешиваю на кнопку trash слушатель для обработки удаления созданной отдельной карточки
-        this._cardTemplate.querySelector('.element__trash').addEventListener('click', this._deleteCard);
+        //навешиваю на кнопку trash слушатель для определения объекта карточки, на корзину которой кликнули
+        this._cardTemplate.querySelector('.element__trash')
+            .addEventListener('click', () => this.onDeleteClick(this.card._id, this._cardTemplate));
+
+        // //навешиваю на кнопку trash слушатель для обработки удаления созданной отдельной карточки
+        // this._cardTemplate.querySelector('.element__trash').addEventListener('click', this.deleteElement);
     }
 
     _renderCard() {
@@ -88,22 +92,31 @@ export class Card {
             .catch((err) => {
                 console.log(err); // выведем ошибку в консоль
             });
+
         return this._cardTemplate;
     }
 
-    _deleteCard = () => {
-        //создаю новый экз класса PopupWithForm для открывания попапа по нажатию иконки trash
-        const popupDelete = new PopupWithForm('.popup_delete', (evt) => {
-            //задаю обработчик submit'а
-            evt.preventDefault();
-            //удаляю из разметки карточку
-            this._cardTemplate.remove();
-            this.apiDeleteCard(this.card._id);
-            popupDelete.close();
-        });
-        popupDelete.open();
-        popupDelete.setEventListeners();
-    }
+    // deleteElement = () => {
+
+    //     //удаляю из разметки карточку
+    //     // this._cardTemplate.remove();
+    //     // //удаляю объект карточки с сервера
+    //     // this.apiDeleteCard(this.card._id)
+    // }
+
+    // _deleteCard = () => {
+    //     //создаю новый экз класса PopupWithForm для открывания попапа по нажатию иконки trash
+    //     const popupDelete = new PopupWithForm('.popup_delete', (evt) => {
+    //         //задаю обработчик submit'а
+    //         evt.preventDefault();
+    //         //удаляю из разметки карточку
+    //         this._cardTemplate.remove();
+    //         this.apiDeleteCard(this.card._id);
+    //         popupDelete.close();
+    //     });
+    //     popupDelete.open();
+    //     popupDelete.setEventListeners();
+    // }
 
     _likeCard = () => {
         const _likeButton = this._cardTemplate.querySelector('.element__like');

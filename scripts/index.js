@@ -44,7 +44,6 @@ const formAddElement = document.querySelector('.form_add-element');
 //помещаю код всей ФОРМЫ для "Edit avatar" в константу
 const formEditAvatar = document.querySelector('.form_edit-avatar');
 
-
 //помещаю код всей ФОРМЫ ввода для "Delete element" в константу
 const formDeleteElement = document.querySelector('.form_delete');
 
@@ -95,7 +94,27 @@ api.getUserInfo()
                             result.name,
                             api.deleteCard,
                             api.putLike,
-                            api.deleteLike);
+                            api.deleteLike,
+                            onDeleteClick);
+
+                        //создаю обработчик нажатия на корзину удаления карточки
+                        function onDeleteClick(id, cardMarkup) {
+                            //создаю обработчик submit'a попапа удаления карточки
+                            const deleteCardPopupForm = new PopupWithForm('.popup_delete', (evt) => {
+                                // Эта строчка отменяет стандартную отправку формы.
+                                evt.preventDefault();
+                                // удаляю объект карточки с сервера и разметку карточки из разметки страницы
+                                api.deleteCard(id);
+                                cardMarkup.remove();
+                                deleteCardPopupForm.close();
+                            });
+                            //прикрепляю обработчик к форме удаления попапа
+                            deleteCardPopupForm.setEventListeners();
+                            //открываю попап удаления карточки
+                            deleteCardPopupForm.open();
+                            //программирую нажатие на корзину trash
+                            //оно уже запрограммировано в Card.makeCardRemovable
+                        };
                         return newCard.renderExistedCard();
                     }
                 },
@@ -170,6 +189,22 @@ const editInfoPopupForm = new PopupWithForm('.popup_edit-info', (evt) => {
 // Прикрепляею обработчик к форме в созданном экземпляре попапа
 editInfoPopupForm.setEventListeners();
 
+//программирую нажатие кнопки "Редактировать" (editButton)
+editButton.addEventListener('click', function pressEditButton() {
+    //получаю объект с данными пользователя
+    const user = userInfo.getUserInfo();
+    //помещаю полученные данные пользователя в разметку блока Info
+    userInfo.setUserInfo(user.name, user.info);
+    // помещаю полученные данные пользователя в поля формы при первом открытии
+    document.querySelector('.form__input_info_name').value = user.name;
+    document.querySelector('.form__input_info_engagement').value = user.info;
+    //очищаю поля ввода от индикации ошибок
+    popupEditInfoValidator.resetValidation();
+    //открываю попап для редактирования user Info
+    editInfoPopupForm.open();
+});
+
+
 // создаю обработчик для формы add element
 // создаю экземпляр класса PopupWithForm для попапа add element
 const addElementPopupForm = new PopupWithForm('.popup_add-element', (evt) => {
@@ -191,11 +226,33 @@ const addElementPopupForm = new PopupWithForm('.popup_add-element', (evt) => {
         item.name,
         api.deleteCard,
         api.putLike,
-        api.deleteLike);
+        api.deleteLike,
+        onDeleteClick);
     //вставляю контент из инпута в карточку
     const renderedNewCard = newCard.renderNewCard();
-    //добалвяю в разметку карточки кнопку ее удаления со всем функционалом
+    //добалвяю в разметку карточки кнопку ее удаления и 
+    //навешенный слушатель-обработчик удаления карточки
     newCard.makeCardRemovable();
+
+    //создаю обработчик удаления карточки
+    function onDeleteClick(id, cardMarkup) {
+        //создаю обработчик submit'a попапа удаления карточки
+        const deleteCardPopupForm = new PopupWithForm('.popup_delete', (evt) => {
+            // Эта строчка отменяет стандартную отправку формы.
+            evt.preventDefault();
+            // удаляю объект карточки с сервера и разметку карточки из разметки страницы
+            api.deleteCard(id);
+            cardMarkup.remove();
+            deleteCardPopupForm.close();
+        });
+        //прикрепляю обработчик к форме удаления попапа
+        deleteCardPopupForm.setEventListeners();
+        //открываю попап удаления карточки
+        deleteCardPopupForm.open();
+        //программирую нажатие на корзину trash
+        //оно уже запрограммировано в Card.makeCardRemovable
+    }
+
     //вставляю разметку добавленной карточкои в elements через создание экземляра класса Section
     const section = new Section({
         // задаю значения параметров конструктора класса Section
@@ -210,20 +267,6 @@ const addElementPopupForm = new PopupWithForm('.popup_add-element', (evt) => {
 // Прикрепляю обработчик к форме в созданном экземпляре попапа
 addElementPopupForm.setEventListeners();
 
-//программирую нажатие кнопки "Редактировать" (editButton)
-editButton.addEventListener('click', function pressEditButton() {
-    //получаю объект с данными пользователя
-    const user = userInfo.getUserInfo();
-    //помещаю полученные данные пользователя в разметку блока Info
-    userInfo.setUserInfo(user.name, user.info);
-    // помещаю полученные данные пользователя в поля формы при первом открытии
-    document.querySelector('.form__input_info_name').value = user.name;
-    document.querySelector('.form__input_info_engagement').value = user.info;
-    //очищаю поля ввода от индикации ошибок
-    popupEditInfoValidator.resetValidation();
-    //открываю попап для редактирования user Info
-    editInfoPopupForm.open();
-});
 // программирую нажатие кнопки "Добавить" (+) (addButton)
 addButton.addEventListener('click', function pressAddButton() {
     // очищаю поля ввода от индикации ошибок
@@ -233,6 +276,8 @@ addButton.addEventListener('click', function pressAddButton() {
     // openPopup(popupAddElement);
     addElementPopupForm.open();
 });
+
+
 
 // задаю правила валидации через создание экзепляров класса FormValidate для каждого попапа с формой ввода
 const popupEditInfoValidator = new FormValidator(config, formEditInfo, inputFields, errorTexts, saveButtons);

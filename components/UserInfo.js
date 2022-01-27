@@ -14,9 +14,8 @@ export class UserInfo {
     }
     setUserInfo(newUserName, newUserInfo) {
         if (newUserName) {
-            console.log('newUserName', newUserName);
-        } else { console.log('не получено newUserName с вервера', newUserName); }
-        this.userName.textContent = newUserName;
-        this.userInfo.textContent = newUserInfo;
+            this.userName.textContent = newUserName;
+            this.userInfo.textContent = newUserInfo;
+        }
     }
 }
