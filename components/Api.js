@@ -64,14 +64,8 @@ export class Api {
             body: body
         })
             .then((res) => this._checkResponse(res))
-        // .then(res => {
-        //     if (res.ok) {
-        //         return res.json();
-        //     }
-        //     // если ошибка, отклоняем промис
-        //     return Promise.reject(`Ошибка: ${res.status}`);
-        // })
     }
+
     deleteCard = (cardId) => {
         return fetch(`https://mesto.nomoreparties.co/v1/cohort-34/cards/${cardId}`, {
             method: 'DELETE',
@@ -80,14 +74,8 @@ export class Api {
             }
         })
             .then((res) => this._checkResponse(res))
-        // .then(res => {
-        //     if (res.ok) {
-        //         return res.json();
-        //     }
-        //     // если ошибка, отклоняем промис
-        //     return Promise.reject(`Ошибка: ${res.status}`);
-        // })
     }
+
     putLike = (body, cardId) => {
         return fetch(`https://mesto.nomoreparties.co/v1/cohort-34/cards/${cardId}/likes`, {
             method: 'PUT',
@@ -98,14 +86,8 @@ export class Api {
             body: body
         })
             .then((res) => this._checkResponse(res))
-        // .then(res => {
-        //     if (res.ok) {
-        //         return res.json();
-        //     }
-        //     // если ошибка, отклоняем промис
-        //     return Promise.reject(`Ошибка: ${res.status}`);
-        // })
     }
+
     deleteLike = (body, cardId) => {
         return fetch(`https://mesto.nomoreparties.co/v1/cohort-34/cards/${cardId}/likes `, {
             method: 'DELETE',
@@ -116,12 +98,5 @@ export class Api {
             body: body
         })
             .then((res) => this._checkResponse(res))
-        // .then(res => {
-        //     if (res.ok) {
-        //         return res.json();
-        //     }
-        //     // если ошибка, отклоняем промис
-        //     return Promise.reject(`Ошибка: ${res.status}`);
-        // })
     }
 }

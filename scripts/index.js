@@ -7,6 +7,7 @@ import '../pages/index.css';
 import { PopupWithImage } from '../components/PopupWithImage.js';
 import { Api } from '../components/Api.js';
 import { renderLoading } from '../utils/utils.js';
+// import values from 'core-js/fn/array/values';
 
 const popupWithImage = new PopupWithImage(
     document.querySelector('.popup__mask-group-full-size'),
@@ -85,9 +86,7 @@ function createCardExample(data, result) {
     //создаю обработчик нажатия на корзину удаления карточки
     function onDeleteClick(id, cardMarkup) {
         //создаю обработчик submit'a попапа удаления карточки
-        const deleteCardPopupForm = new PopupWithForm('.popup_delete', (evt) => {
-            // Эта строчка отменяет стандартную отправку формы.
-            evt.preventDefault();
+        const deleteCardPopupForm = new PopupWithForm('.popup_delete', () => {
             // удаляю объект карточки с сервера и разметку карточки из разметки страницы
             api.deleteCard(id)
                 .then(() => {
@@ -137,17 +136,18 @@ api.getUserInfo()
     })
 
 //создаю обработчик формы редактирования аватара
-const editAvatarPopupForm = new PopupWithForm('.popup_edit-avatar', (evt) => {
-    // Эта строчка отменяет стандартную отправку формы.
-    evt.preventDefault();
+const editAvatarPopupForm = new PopupWithForm('.popup_edit-avatar', (values) => {
     renderLoading(formEditAvatar, 'Сохранение...');
     //отправляю новую фото аватара на сервер
     api.patchAvatar(
         JSON.stringify({
-            avatar: editAvatarPopupForm.getInputValues()[0]
+            avatar: values.field1
         }))
         //в случае успеха отрабатывает обработчик формы
         .then(() => {
+            //вставляю в разметку новый путь к фото аватара
+            document.querySelector('.avatar__photo')
+                .setAttribute("src", values.field1);
             //возвращаю старое название кнопке Сохранить
             renderLoading(formEditAvatar, 'Сохранить');
             //закрываю попап методом экзкмпляра класса PopupWithForm
@@ -156,9 +156,6 @@ const editAvatarPopupForm = new PopupWithForm('.popup_edit-avatar', (evt) => {
         .catch((err) => {
             console.log(err);
         });
-    //вставляю в разметку новый путь к фото аватара
-    document.querySelector('.avatar__photo').setAttribute("src", editAvatarPopupForm.getInputValues()[0]);
-
 })
 //прикрепляю обработчик к форме
 editAvatarPopupForm.setEventListeners();
@@ -173,23 +170,22 @@ avatar.addEventListener('click', () => {
 })
 //создаю обработчик формы edit info
 // создаю экземпляр класса PopupWithForm для попапа edit info
-const editInfoPopupForm = new PopupWithForm('.popup_edit-info', (evt) => {
-    // Эта строчка отменяет стандартную отправку формы.
-    evt.preventDefault();
-    //задаю данные о пользователе методом экземпляра класса UserInfo
-    userInfo.setUserInfo(
-        editInfoPopupForm.getInputValues()[0],
-        editInfoPopupForm.getInputValues()[1]
-    );
+const editInfoPopupForm = new PopupWithForm('.popup_edit-info', (values) => {
     //перед запросом на сервер меняю текст кнопки попапа
     renderLoading(formEditInfo, 'Сохранение...');
     //заменяю данные о пользователе на сервере
     api.patchUserInfo(JSON.stringify({
-        name: editInfoPopupForm.getInputValues()[0],
-        about: editInfoPopupForm.getInputValues()[1]
+        name: values.field1,
+        about: values.field2
     }))
+        //в случае успеха 
         .then(() => {
-            //возвращаю старое название кнопке Сохранить
+            //задаю даныые о пользоваетеле методом класса UserInfo
+            userInfo.setUserInfo(
+                values.field1,
+                values.field2
+            );
+            // возвращаю старое название кнопке Сохранить
             renderLoading(formEditInfo, 'Сохранить');
             //закрываю попап методом класса PopupWithForm
             editInfoPopupForm.close();
@@ -197,8 +193,7 @@ const editInfoPopupForm = new PopupWithForm('.popup_edit-info', (evt) => {
         .catch((err) => {
             console.log(err);
         });
-
-})
+});
 // Прикрепляею обработчик к форме в созданном экземпляре попапа
 editInfoPopupForm.setEventListeners();
 
@@ -217,16 +212,13 @@ editButton.addEventListener('click', function pressEditButton() {
     editInfoPopupForm.open();
 });
 
-
 // создаю обработчик для формы add element
 // создаю экземпляр класса PopupWithForm для попапа add element
-const addElementPopupForm = new PopupWithForm('.popup_add-element', (evt) => {
-    // Эта строчка отменяет стандартную отправку формы.
-    evt.preventDefault();
+const addElementPopupForm = new PopupWithForm('.popup_add-element', (values) => {
     // в качестве параметров функции использую значения, полученные в input и задаю пустой массив лайкнувших
     const item = {
-        name: addElementPopupForm.getInputValues()[0],
-        link: addElementPopupForm.getInputValues()[1],
+        name: values.field1,
+        link: values.field2,
         likes: []
     };
     //создаю экземпляр класса Card вместе с обработчиком удаления карточки

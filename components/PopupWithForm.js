@@ -6,18 +6,39 @@ export class PopupWithForm extends Popup {
         this.submitForm = submitForm;
         this._inputs = this._popup.querySelectorAll('.form__input');
     }
-    getInputValues() {
-        const inputs = Array.from(this._inputs);
-        const values = inputs.map((element) => {
-            return element.value;
-        });
+    _getInputValues() {
+        // console.log('разметка полей ввода', this._inputs);
+        // const array = this._inputs;
+        // const values = {}
+        // this._inputs.forEach(element => {
+        //     const values = {
+        //         array.indexOf(element): element.value,
+        //     };
+        // })
+        const values = {
+            field1: this._inputs[0].value,
+            field2: this._inputs[1].value
+        }
+
         return values;
     }
     setEventListeners() {
         super.setEventListeners();
         document.querySelector(this.popupSelector)
             .querySelector('.form')
-            .addEventListener('submit', this.submitForm);
+            .addEventListener('submit', (evt) => {
+                if (this.popupSelector === '.popup_delete') {
+                    console.log('отработал if');
+                    // Эта строчка отменяет стандартную отправку формы.
+                    evt.preventDefault();
+                    this.submitForm();
+                } else {
+                    //Эта строчка отменяет стандартную отправку формы
+                    evt.preventDefault();
+                    this.submitForm(this._getInputValues());
+                }
+
+            })
     }
     close() {
         super.close();

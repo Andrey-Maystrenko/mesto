@@ -15,6 +15,8 @@ export class UserInfo {
     setUserInfo(newUserName, newUserInfo) {
         if (newUserName) {
             this.userName.textContent = newUserName;
+        }
+        if (newUserInfo) {
             this.userInfo.textContent = newUserInfo;
         }
     }
