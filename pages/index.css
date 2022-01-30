@@ -23,6 +23,7 @@
 @import url(../blocks/element/__like-amount/element__like-amount.css);
 @import url(../blocks/element/__like-group/element__like-group.css);
 @import url(../blocks/element/__trash/element__trash.css);
+@import url(../blocks/element/__trash/_visible/element__trash_visible.css);
 @import url(../blocks/footer/footer.css);
 @import url(../blocks/footer/__copyright/footer__copyright.css);
 @import url(../blocks/popup/popup.css);

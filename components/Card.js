@@ -31,10 +31,12 @@ export class Card {
 
     makeCardRemovable() {
         //вставляю в разметку добавленной карточки кнопку trash для удаления карточки
-        this._cardTemplate.insertAdjacentHTML('beforeend', '<button class="element__trash" type="button"></button>');
+        this._cardTemplate.querySelector('.element__trash').classList.remove('element__trash_visible');
+
         //навешиваю на кнопку trash слушатель для определения объекта карточки, на корзину которой кликнули
         this._cardTemplate.querySelector('.element__trash')
-            .addEventListener('click', () => this.onDeleteClick(this.card._id, this._cardTemplate));
+            .addEventListener('click',
+                () => this.onDeleteClick(this.card._id, this._cardTemplate));
     }
 
     _renderCard() {
