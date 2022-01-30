@@ -7,19 +7,13 @@ export class PopupWithForm extends Popup {
         this._inputs = this._popup.querySelectorAll('.form__input');
     }
     _getInputValues() {
-        // console.log('разметка полей ввода', this._inputs);
-        // const array = this._inputs;
-        // const values = {}
-        // this._inputs.forEach(element => {
-        //     const values = {
-        //         array.indexOf(element): element.value,
-        //     };
-        // })
-        const values = {
-            field1: this._inputs[0].value,
-            field2: this._inputs[1].value
-        }
-
+        const inputs = Array.from(this._inputs);
+        //преобразую массив c разметками полей ввода с введенными значениями
+        //в объект с полями fild1, field 2 (if any)
+        const values = inputs.reduce((acc, current, index) => {
+            acc[`field${index + 1}`] = current.value;
+            return acc;
+        }, {});
         return values;
     }
     setEventListeners() {
@@ -37,7 +31,6 @@ export class PopupWithForm extends Popup {
                     evt.preventDefault();
                     this.submitForm(this._getInputValues());
                 }
-
             })
     }
     close() {
