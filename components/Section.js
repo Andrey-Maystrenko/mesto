@@ -3,16 +3,17 @@ export class Section {
         this.items = items;
         this.renderer = renderer;
         this.elementsSelector = elementsSelector;
+        this._container = document.querySelector(this.elementsSelector)
     }
     renderSection() {
         this.items.forEach((card) => {
             const renderedCard = this.renderer(card);
-            document.querySelector(this.elementsSelector).append(renderedCard);
+            this._container.append(renderedCard);
         });
     }
 
     addItem(renderedNewCard) {
         //вставляю разметку добавленной карточкои в elements
-        document.querySelector(this.elementsSelector).prepend(renderedNewCard);
+        this._container.prepend(renderedNewCard);
     }
 }

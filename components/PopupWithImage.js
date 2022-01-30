@@ -1,10 +1,10 @@
 import { Popup } from './Popup.js';
 
 export class PopupWithImage extends Popup {
-    constructor(imagePopup, imagePopupTitle, popupSelector) {
+    constructor(popupSelector) {
         super(popupSelector);
-        this.imagePopup = imagePopup;
-        this.imagePopupTitle = imagePopupTitle;
+        this.imagePopup = document.querySelector(`${popupSelector} .popup__mask-group-full-size`);
+        this.imagePopupTitle = document.querySelector(`${popupSelector} .popup__title-mask-group`);
     }
     handleCardClick = (event) => {
         //определяю на какой элемент кликнули

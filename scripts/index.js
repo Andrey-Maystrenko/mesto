@@ -7,13 +7,8 @@ import '../pages/index.css';
 import { PopupWithImage } from '../components/PopupWithImage.js';
 import { Api } from '../components/Api.js';
 import { renderLoading } from '../utils/utils.js';
-// import values from 'core-js/fn/array/values';
 
-const popupWithImage = new PopupWithImage(
-    document.querySelector('.popup__mask-group-full-size'),
-    document.querySelector('.popup__title-mask-group'),
-    '.popup_mask-group');
-
+const popupWithImage = new PopupWithImage('.popup_mask-group');
 popupWithImage.setEventListeners();
 
 const userInfo = new UserInfo({
@@ -44,18 +39,6 @@ const formAddElement = document.querySelector('.form_add-element');
 
 //помещаю код всей ФОРМЫ для "Edit avatar" в константу
 const formEditAvatar = document.querySelector('.form_edit-avatar');
-
-//помещаю код всей ФОРМЫ ввода для "Delete element" в константу
-const formDeleteElement = document.querySelector('.form_delete');
-
-//помещаю в переменную массив со всеми кнопками сохранения/отправки формы ПОПАПОВ
-const saveButtons = document.querySelectorAll('.popup__save-button');
-
-//помещаю в переменную массив со всеми элементами полей ввода
-const inputFields = document.querySelectorAll('.form__input');
-
-//помещаю в переменную массив со всеми span'ами с текстом ошибки
-const errorTexts = document.querySelectorAll('.popup__error');
 
 const config = {
     inputSelector: '.form__input',
@@ -253,14 +236,14 @@ addButton.addEventListener('click', function pressAddButton() {
 });
 
 // задаю правила валидации через создание экзепляров класса FormValidate для каждого попапа с формой ввода
-const popupEditInfoValidator = new FormValidator(config, formEditInfo, inputFields, errorTexts, saveButtons);
+const popupEditInfoValidator = new FormValidator(config, formEditInfo);
 
 popupEditInfoValidator.enableValidation();
 
-const popupAddElementValidator = new FormValidator(config, formAddElement, inputFields, errorTexts, saveButtons);
+const popupAddElementValidator = new FormValidator(config, formAddElement);
 
 popupAddElementValidator.enableValidation();
 
-const popupEditAvatarValidation = new FormValidator(config, formEditAvatar, inputFields, errorTexts, saveButtons);
+const popupEditAvatarValidation = new FormValidator(config, formEditAvatar);
 
 popupEditAvatarValidation.enableValidation();
