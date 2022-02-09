@@ -3,8 +3,10 @@ import { Popup } from './Popup.js';
 export class PopupWithImage extends Popup {
     constructor(popupSelector) {
         super(popupSelector);
-        this.imagePopup = document.querySelector(`${popupSelector} .popup__mask-group-full-size`);
-        this.imagePopupTitle = document.querySelector(`${popupSelector} .popup__title-mask-group`);
+        // this.imagePopup = document.querySelector(`${popupSelector} .popup__mask-group-full-size`);
+        this.imagePopup = this._popup.querySelector('.popup__mask-group-full-size');
+        // this.imagePopupTitle = document.querySelector(`${popupSelector} .popup__title-mask-group`);
+        this.imagePopupTitle = this._popup.querySelector('.popup__title-mask-group');
     }
     handleCardClick = (event) => {
         //определяю на какой элемент кликнули

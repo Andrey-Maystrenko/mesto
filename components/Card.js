@@ -3,22 +3,20 @@ export class Card {
         card,
         templateSelector,
         handleCardClick,
-        apiGetUserInfo,
-        apiPostNewCard,
         myName,
         apiPutLike,
         apiDeleteLike,
-        onDeleteClick
+        onDeleteClick,
+        userId
     ) {
         this.card = card;
         this.templateSelector = templateSelector;
         this.handleCardClick = handleCardClick;
-        this.apiGetUserInfo = apiGetUserInfo;
-        this.apiPostNewCard = apiPostNewCard;
         this.myName = myName;
         this.apiPutLike = apiPutLike;
         this.apiDeleteLike = apiDeleteLike;
-        this.onDeleteClick = onDeleteClick
+        this.onDeleteClick = onDeleteClick;
+        this.userId = userId
     }
 
     _createCardDomNode() {
@@ -29,17 +27,17 @@ export class Card {
             .cloneNode(true);
     }
 
-    makeCardRemovable() {
+    _makeCardRemovable() {
         //вставляю в разметку добавленной карточки кнопку trash для удаления карточки
         this._cardTemplate.querySelector('.element__trash').classList.remove('element__trash_visible');
 
-        //навешиваю на кнопку trash слушатель для определения объекта карточки, на корзину которой кликнули
-        this._cardTemplate.querySelector('.element__trash')
-            .addEventListener('click',
-                () => this.onDeleteClick(this.card._id, this._cardTemplate));
+        // //навешиваю на кнопку trash слушатель для определения объекта карточки, на корзину которой кликнули
+        // this._cardTemplate.querySelector('.element__trash')
+        //     .addEventListener('click',
+        //         () => this.onDeleteClick(this.card._id, this._cardTemplate));
     }
 
-    _renderCard() {
+    renderCard() {
         this._createCardDomNode();
         //получаю html код рисунка карточки и задаю ему атрибут scr со значением link из массива
         this._cardTemplate.querySelector('.element__mask-group').setAttribute("src", this.card.link);
@@ -53,42 +51,12 @@ export class Card {
             //делаю лайк активным
             this._cardTemplate.querySelector('.element__like').classList.add('element__like_active');
         }
+        //определяю, моя ли это карточка
+        if (this.card.owner._id === this.userId) {
+            //делаю карточку удаляемой (с иконкой trash и присущими ей функциями)
+            this._makeCardRemovable();
+        }
         this._addEventListeners();
-    }
-
-    renderExistedCard() {
-        this._renderCard();
-        //запрашиваю с сервера данные usera для получения его name для определения "своей карточки"
-        this.apiGetUserInfo
-            //вставляю информацию из полученного объекта в разметку
-            .then((result) => {
-                if (this.card.owner._id === result._id) {
-                    //делаю карточку удаляемой (с иконкой trash и присущими ей функциями)
-                    this.makeCardRemovable();
-                }
-            })
-            .catch((err) => {
-                console.log(err); // выведем ошибку в консоль
-            });
-        return this._cardTemplate;
-    }
-
-    renderNewCard() {
-        this._renderCard();
-        //соханяю добавленную картинку на сервере
-        this.apiPostNewCard(
-            JSON.stringify({
-                name: this.card.name,
-                link: this.card.link,
-                likes: []
-            })
-        )
-            .then(result => {
-                this.card = result;
-            })
-            .catch((err) => {
-                console.log(err); // выведем ошибку в консоль
-            });
         return this._cardTemplate;
     }
 
@@ -131,7 +99,13 @@ export class Card {
     }
 
     _addEventListeners() {
-        this._cardTemplate.querySelector('.element__like').addEventListener('click', this._likeCard);
-        this._cardTemplate.querySelector('.element__button-mask-group').addEventListener('click', this.handleCardClick);
+        this._cardTemplate.querySelector('.element__like')
+            .addEventListener('click', this._likeCard);
+        this._cardTemplate.querySelector('.element__button-mask-group')
+            .addEventListener('click', this.handleCardClick);
+        //навешиваю на кнопку trash слушатель для определения объекта карточки, на корзину которой кликнули
+        this._cardTemplate.querySelector('.element__trash')
+            .addEventListener('click',
+                () => this.onDeleteClick(this.card._id, this._cardTemplate));
     }
 }

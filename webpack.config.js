@@ -39,10 +39,11 @@ module.exports = {
                 test: /\.css$/,
                 use: [
                     MiniCssExtractPlugin.loader,
-                    { loader: 'css-loader',
-                    options: {
-                        importLoaders: 1
-                    }
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            importLoaders: 1
+                        }
                     },
                     "postcss-loader"
                 ]
@@ -53,5 +54,6 @@ module.exports = {
         new HtmlWebpackPlugin({ template: './index.html' }),
         new MiniCssExtractPlugin(),
         new CleanWebpackPlugin(),
-    ]
+    ],
+    devtool: 'source-map'
 }

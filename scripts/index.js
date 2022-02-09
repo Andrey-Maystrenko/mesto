@@ -2,6 +2,7 @@ import { Card } from '../components/Card.js';
 import { FormValidator } from '../components/FormValidator.js';
 import { Section } from '../components/Section.js';
 import { PopupWithForm } from '../components/PopupWithForm.js';
+import { PopupWithConfirmation } from '../components/PopupWithConfirmation.js';
 import { UserInfo } from '../components/UserInfo.js';
 import '../pages/index.css';
 import { PopupWithImage } from '../components/PopupWithImage.js';
@@ -54,37 +55,42 @@ const templateSelector = ".template";
 //помещаю в переменную разметку аватара
 const avatar = document.querySelector('.avatar');
 
+//помещаю в переменную разметку поля ввода для имени автора
+const infoNameField = document.querySelector('.form__input_info_name');
+//помещаю в переменную разметку поля ввода для рода занятий автора
+const infoEngagementField = document.querySelector('.form__input_info_engagement');
+
+//создаю обработчик нажатия на корзину удаления карточки
+function onDeleteClick(id, cardMarkup) {
+    //создаю обработчик submit'a попапа удаления карточки
+    const deleteCardPopupForm = new PopupWithConfirmation('.popup_delete', () => {
+        // удаляю объект карточки с сервера и разметку карточки из разметки страницы
+        api.deleteCard(id)
+            .then(() => {
+                cardMarkup.remove();
+                deleteCardPopupForm.close();
+            })
+            .catch((err) => {
+                console.log(err); // выведем ошибку в консоль
+            })
+    });
+    //прикрепляю обработчик к форме удаления попапа
+    deleteCardPopupForm.setEventListeners();
+    //открываю попап удаления карточки
+    deleteCardPopupForm.open();
+};
+
 //задаю функцию создания экземпляра класса карточки вместе с обработчиком ее удаления
-function createCardExample(data, result) {
+function createCardExample(data, result, userId) {
     const newCard = new Card(
         data,
         templateSelector,
         popupWithImage.handleCardClick,
-        api.getUserInfo(),
-        api.postNewCard,
         result.name,
         api.putLike,
         api.deleteLike,
-        onDeleteClick);
-    //создаю обработчик нажатия на корзину удаления карточки
-    function onDeleteClick(id, cardMarkup) {
-        //создаю обработчик submit'a попапа удаления карточки
-        const deleteCardPopupForm = new PopupWithForm('.popup_delete', () => {
-            // удаляю объект карточки с сервера и разметку карточки из разметки страницы
-            api.deleteCard(id)
-                .then(() => {
-                    cardMarkup.remove();
-                    deleteCardPopupForm.close();
-                })
-                .catch((err) => {
-                    console.log(err); // выведем ошибку в консоль
-                })
-        });
-        //прикрепляю обработчик к форме удаления попапа
-        deleteCardPopupForm.setEventListeners();
-        //открываю попап удаления карточки
-        deleteCardPopupForm.open();
-    };
+        onDeleteClick,
+        userId);
     return newCard;
 }
 
@@ -104,9 +110,11 @@ api.getUserInfo()
                     items: initialCards,
                     renderer: (item) => {
                         //создаю экземпляр класса Card вместе с обработчиком удаления карточки
-                        const newCard = createCardExample(item, result);
+                        const newCard = createCardExample(item, result, result._id);
                         //отрисовываю карточку (создаю ДомНоду)
-                        return newCard.renderExistedCard();
+                        const renderedNewCard = newCard.renderCard();
+                        //вставляю отрисованную карточку в контейнер
+                        section.addItem(renderedNewCard)
                     }
                 },
                     '.elements');
@@ -186,9 +194,9 @@ editButton.addEventListener('click', function pressEditButton() {
     const user = userInfo.getUserInfo();
     //помещаю полученные данные пользователя в разметку блока Info
     userInfo.setUserInfo(user.name, user.info);
-    // помещаю полученные данные пользователя в поля формы при первом открытии
-    document.querySelector('.form__input_info_name').value = user.name;
-    document.querySelector('.form__input_info_engagement').value = user.info;
+    //помещаю полученные данные пользователя в поля формы при первом открытии
+    infoNameField.value = user.name;
+    infoEngagementField.value = user.info;
     //очищаю поля ввода от индикации ошибок
     popupEditInfoValidator.resetValidation();
     //открываю попап для редактирования user Info
@@ -204,24 +212,53 @@ const addElementPopupForm = new PopupWithForm('.popup_add-element', (values) => 
         link: values.field2,
         likes: []
     };
-    //создаю экземпляр класса Card вместе с обработчиком удаления карточки
-    const newCard = createCardExample(item, item);
-    //вставляю контент из инпута в карточку
-    const renderedNewCard = newCard.renderNewCard();
-    //добалвяю в разметку карточки кнопку ее удаления и 
-    //навешенный слушатель-обработчик удаления карточки
-    newCard.makeCardRemovable();
-    //вставляю разметку добавленной карточкои в elements через создание экземляра класса Section
-    const section = new Section({
-        // задаю значения параметров конструктора класса Section
-        items: item,
-        renderer: renderedNewCard
-    },
-        '.elements');
-    section.addItem(renderedNewCard);
-    // закрываю попап методом из класса PopupWithForm, содержащий очистку полей
-    addElementPopupForm.close()
-});
+    //отправляю новую карточку на сервер
+    api.postNewCard(
+        JSON.stringify({
+            name: item.name,
+            link: item.link,
+            likes: []
+        })
+    )
+        .then(result => {
+            const section = new Section({
+                // задаю значения параметров конструктора класса Section
+                items: [result],
+                renderer: (result) => {
+                    //создаю экземпляр класса Card вместе с обработчиком удаления карточки
+                    const newCard = createCardExample(result, result.owner, result.owner._id);
+                    //вставляю контент из инпута в экземпляр класса Card, создавая карточку
+                    const renderedNewCard = newCard.renderCard();
+                    //вставляю разметку добавленной карточки в elements
+                    section.addItem(renderedNewCard);
+                }
+            },
+                '.elements');
+            //отрисовываю карточку, запуская renderer
+            section.renderSection();
+            // закрываю попап методом из класса PopupWithForm, содержащий очистку полей
+            addElementPopupForm.close()
+        })
+        // .then(result => {
+        //     //создаю экземпляр класса Card вместе с обработчиком удаления карточки
+        //     const newCard = createCardExample(result, result.owner, result.owner._id);
+        //     //вставляю контент из инпута в экземпляр класса Card, создавая карточку
+        //     const renderedNewCard = newCard.renderCard();
+        //     const section = new Section({
+        //         // задаю значения параметров конструктора класса Section
+        //         items: result,
+        //         renderer: renderedNewCard
+        //     },
+        //         '.elements');
+        //     //вставляю карточку в контейнер
+        //     section.addItem(renderedNewCard);
+        //     // закрываю попап методом из класса PopupWithForm, содержащий очистку полей
+        //     addElementPopupForm.close()
+        // })
+        .catch((err) => {
+            console.log(err); // выведем ошибку в консоль
+        })
+})
 // Прикрепляю обработчик к форме в созданном экземпляре попапа
 addElementPopupForm.setEventListeners();
 

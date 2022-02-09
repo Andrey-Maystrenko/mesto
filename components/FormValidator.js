@@ -3,9 +3,9 @@ export class FormValidator {
     constructor(config, formElement) {
         this.config = config;
         this.formElement = formElement;
-        this.inputFields = document.querySelectorAll('.form__input');
-        this.errorTexts = document.querySelectorAll('.popup__error');
-        this.saveButtons = document.querySelectorAll('.popup__save-button');
+        this.inputFields = this.formElement.querySelectorAll('.form__input');
+        this.errorTexts = this.formElement.querySelectorAll('.popup__error');
+        this.saveButtons = this.formElement.querySelectorAll('.popup__save-button');
     }
 
     //задаю функцию удаления индикации поля при ошибке

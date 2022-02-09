@@ -21,18 +21,28 @@ export class PopupWithForm extends Popup {
         document.querySelector(this.popupSelector)
             .querySelector('.form')
             .addEventListener('submit', (evt) => {
-                if (this.popupSelector === '.popup_delete') {
-                    console.log('отработал if');
-                    // Эта строчка отменяет стандартную отправку формы.
-                    evt.preventDefault();
-                    this.submitForm();
-                } else {
-                    //Эта строчка отменяет стандартную отправку формы
-                    evt.preventDefault();
-                    this.submitForm(this._getInputValues());
-                }
+                //Эта строчка отменяет стандартную отправку формы
+                evt.preventDefault();
+                this.submitForm(this._getInputValues());
             })
     }
+    // setEventListeners() {
+    //     super.setEventListeners();
+    //     document.querySelector(this.popupSelector)
+    //         .querySelector('.form')
+    //         .addEventListener('submit', (evt) => {
+    //             if (this.popupSelector === '.popup_delete') {
+    //                 console.log('отработал if');
+    //                 // Эта строчка отменяет стандартную отправку формы.
+    //                 evt.preventDefault();
+    //                 this.submitForm();
+    //             } else {
+    //                 //Эта строчка отменяет стандартную отправку формы
+    //                 evt.preventDefault();
+    //                 this.submitForm(this._getInputValues());
+    //             }
+    //         })
+    // }
     close() {
         super.close();
         this._inputs.forEach(element => {
