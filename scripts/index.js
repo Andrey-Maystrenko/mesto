@@ -48,7 +48,6 @@ const config = {
     inputErrorClass: 'form__input_error',
     errorClass: 'popup__error_visible',
 }
-
 //помещаю в переменнную селектор template'a разметки карточки 
 const templateSelector = ".template";
 
@@ -57,6 +56,7 @@ const avatar = document.querySelector('.avatar');
 
 //помещаю в переменную разметку поля ввода для имени автора
 const infoNameField = document.querySelector('.form__input_info_name');
+
 //помещаю в переменную разметку поля ввода для рода занятий автора
 const infoEngagementField = document.querySelector('.form__input_info_engagement');
 
@@ -87,13 +87,36 @@ function createCardExample(data, result, userId) {
         templateSelector,
         popupWithImage.handleCardClick,
         result.name,
-        api.putLike,
-        api.deleteLike,
         onDeleteClick,
-        userId);
+        userId,
+        () => {
+            if (newCard.isLiked()) {
+                api.deleteLike(
+                    JSON.stringify({
+                        likes: data.owner.name
+                    }),
+                    data._id
+                )
+                    .then((result) => newCard.setLikeInfo(result.likes))
+                    .catch((err) => {
+                        console.log(err); // выведем ошибку в консоль
+                    });
+            } else {
+                // добавление лайка
+                api.putLike(
+                    JSON.stringify({
+                        likes: data.owner.name
+                    }),
+                    data._id
+                )
+                    .then((result) => newCard.setLikeInfo(result.likes))
+                    .catch((err) => {
+                        console.log(err); // выведем ошибку в консоль
+                    });
+            }
+        });
     return newCard;
 }
-
 //отрисовываю начальные данные о пользователе - свойства name, about, avatar
 //запрашиваю с сервера информацию о пользователе - свойства name, about, avatar
 api.getUserInfo()
@@ -125,7 +148,6 @@ api.getUserInfo()
                 console.log(err); // выведем ошибку в консоль
             })
     })
-
 //создаю обработчик формы редактирования аватара
 const editAvatarPopupForm = new PopupWithForm('.popup_edit-avatar', (values) => {
     renderLoading(formEditAvatar, 'Сохранение...');
@@ -239,22 +261,6 @@ const addElementPopupForm = new PopupWithForm('.popup_add-element', (values) => 
             // закрываю попап методом из класса PopupWithForm, содержащий очистку полей
             addElementPopupForm.close()
         })
-        // .then(result => {
-        //     //создаю экземпляр класса Card вместе с обработчиком удаления карточки
-        //     const newCard = createCardExample(result, result.owner, result.owner._id);
-        //     //вставляю контент из инпута в экземпляр класса Card, создавая карточку
-        //     const renderedNewCard = newCard.renderCard();
-        //     const section = new Section({
-        //         // задаю значения параметров конструктора класса Section
-        //         items: result,
-        //         renderer: renderedNewCard
-        //     },
-        //         '.elements');
-        //     //вставляю карточку в контейнер
-        //     section.addItem(renderedNewCard);
-        //     // закрываю попап методом из класса PopupWithForm, содержащий очистку полей
-        //     addElementPopupForm.close()
-        // })
         .catch((err) => {
             console.log(err); // выведем ошибку в консоль
         })

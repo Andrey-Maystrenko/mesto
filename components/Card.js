@@ -4,19 +4,17 @@ export class Card {
         templateSelector,
         handleCardClick,
         myName,
-        apiPutLike,
-        apiDeleteLike,
         onDeleteClick,
-        userId
+        userId,
+        handleLikeClick
     ) {
         this.card = card;
         this.templateSelector = templateSelector;
         this.handleCardClick = handleCardClick;
         this.myName = myName;
-        this.apiPutLike = apiPutLike;
-        this.apiDeleteLike = apiDeleteLike;
         this.onDeleteClick = onDeleteClick;
-        this.userId = userId
+        this.userId = userId;
+        this._handleLikeClick = handleLikeClick;
     }
 
     _createCardDomNode() {
@@ -30,11 +28,6 @@ export class Card {
     _makeCardRemovable() {
         //вставляю в разметку добавленной карточки кнопку trash для удаления карточки
         this._cardTemplate.querySelector('.element__trash').classList.remove('element__trash_visible');
-
-        // //навешиваю на кнопку trash слушатель для определения объекта карточки, на корзину которой кликнули
-        // this._cardTemplate.querySelector('.element__trash')
-        //     .addEventListener('click',
-        //         () => this.onDeleteClick(this.card._id, this._cardTemplate));
     }
 
     renderCard() {
@@ -60,47 +53,27 @@ export class Card {
         return this._cardTemplate;
     }
 
-    _likeCard = () => {
+    isLiked() {
+        /* Метод возвращает true, если лайк установлен, и false, если нет */
+        const _likeButton = this._cardTemplate.querySelector('.element__like');
+        if (_likeButton.classList.contains('element__like_active')) {
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+    setLikeInfo(likes) {
+        this._cardTemplate.querySelector('.element__like-amount').textContent = likes.length;
+        // Меняем состояние кнопки лайка
         const _likeButton = this._cardTemplate.querySelector('.element__like');
         _likeButton.classList.toggle('element__like_active');
-        //если лайк поставлен (лайк активный)
-        if (_likeButton.classList.contains('element__like_active')) {
-            //отправляю свое owner.name на сервер в массив likes
-            this.apiPutLike(
-                JSON.stringify({
-                    likes: this.card.owner.name
-                }), this.card._id
-            )
-                .then((result) => {
-                    console.log('лайк отправлен на сервер, мое имя в массиве лайков', result);
-                    //вставляю новое количество лайков в разметку
-                    this._cardTemplate.querySelector('.element__like-amount').textContent = result.likes.length;
-                })
-                .catch((err) => {
-                    console.log(err); // выведем ошибку в консоль
-                });
-        }
-        //если лайк снят
-        else {
-            //удаляю свое owner.name из массива likes
-            this.apiDeleteLike(
-                JSON.stringify({
-                    likes: this.card.owner.name
-                }), this.card._id
-            )
-                .then(result => {
-                    //вставляю новое количество лайков в разметку
-                    this._cardTemplate.querySelector('.element__like-amount').textContent = result.likes.length;
-                })
-                .catch((err) => {
-                    console.log(err); // выведем ошибку в консоль
-                });
-        }
     }
 
     _addEventListeners() {
         this._cardTemplate.querySelector('.element__like')
-            .addEventListener('click', this._likeCard);
+            .addEventListener('click', () => this._handleLikeClick());
         this._cardTemplate.querySelector('.element__button-mask-group')
             .addEventListener('click', this.handleCardClick);
         //навешиваю на кнопку trash слушатель для определения объекта карточки, на корзину которой кликнули

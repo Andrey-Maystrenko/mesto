@@ -8,8 +8,6 @@ export class Section {
     renderSection() {
         this._items.forEach((card) => {
             this._renderer(card)
-            // const renderedCard = this._renderer(card);
-            // this._container.append(renderedCard);
         });
     }
 
