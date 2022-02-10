@@ -60,24 +60,27 @@ const infoNameField = document.querySelector('.form__input_info_name');
 //помещаю в переменную разметку поля ввода для рода занятий автора
 const infoEngagementField = document.querySelector('.form__input_info_engagement');
 
+//создаю экз класса попапа удаления карточки
+const deleteCardPopupForm = new PopupWithConfirmation('.popup_delete');
+//навешиваю на него запуск обработчика сабмита
+deleteCardPopupForm.setEventListeners();
 //создаю обработчик нажатия на корзину удаления карточки
 function onDeleteClick(id, cardMarkup) {
-    //создаю обработчик submit'a попапа удаления карточки
-    const deleteCardPopupForm = new PopupWithConfirmation('.popup_delete', () => {
-        // удаляю объект карточки с сервера и разметку карточки из разметки страницы
-        api.deleteCard(id)
-            .then(() => {
-                cardMarkup.remove();
-                deleteCardPopupForm.close();
-            })
-            .catch((err) => {
-                console.log(err); // выведем ошибку в консоль
-            })
-    });
-    //прикрепляю обработчик к форме удаления попапа
-    deleteCardPopupForm.setEventListeners();
     //открываю попап удаления карточки
     deleteCardPopupForm.open();
+    //методом класса попапа удаления задаю обработчик сабмита попапа удаления
+    deleteCardPopupForm.setFormSubmit(
+        function () {
+            api.deleteCard(id)
+                .then(() => {
+                    cardMarkup.remove();
+                    deleteCardPopupForm.close();
+                })
+                .catch((err) => {
+                    console.log(err); // выведем ошибку в консоль
+                })
+        }
+    )
 };
 
 //задаю функцию создания экземпляра класса карточки вместе с обработчиком ее удаления

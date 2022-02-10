@@ -4,6 +4,11 @@ export class PopupWithConfirmation extends Popup {
         super(popupSelector);
         this.submitForm = submitForm;
     }
+
+    setFormSubmit(handleCardDelete) {
+        this.submitForm = handleCardDelete
+    }
+
     setEventListeners() {
         super.setEventListeners();
         document.querySelector(this.popupSelector)
@@ -11,7 +16,6 @@ export class PopupWithConfirmation extends Popup {
             .addEventListener('submit', (evt) => {
                 evt.preventDefault();
                 this.submitForm();
-            }
-            )
+            })
     }
 }
